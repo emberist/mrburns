@@ -66,8 +66,6 @@ impl Config {
             .truncate(true)
             .open(CONFIG_FILE_NAME)?;
 
-        // let mut file = File::create(CONFIG_FILE_NAME)?;
-
         serde_json::to_writer_pretty(&mut file, &json_config)?;
 
         Ok(())
