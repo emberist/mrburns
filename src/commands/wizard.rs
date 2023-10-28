@@ -22,7 +22,7 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
 
     intro("Starting configuration")?;
 
-    if args.force {
+    if args.force && Config::exists() {
         let should_continue =
             confirm("You are overriding the current configuration. Do you want to preceed?")
                 .interact()?;
