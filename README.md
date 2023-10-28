@@ -24,14 +24,18 @@ Then run the `install.sh` script:
 ./install.sh
 ```
 
+### Comming soon
+
+Support for github, asana, bitbucket and more!
+
 ### Set the environment variables
 
-Set the following environment variables in your `~/.zshrc` file (or `~/.bashrc` if you use Bash).
+Based on which tool you are using, you have to add the following environment variables in your `~/.zshrc` file (or `~/.bashrc` if you use Bash).
 
 ```bash
-export JIRA_USERNAME=PUT_YOUR_USERNAME_HERE
-export JIRA_TOKEN=PUT_YOUR_TOKEN_HERE
-export GITLAB_TOKEN=PUT_YOUR_TOKEN_HERE
+export JIRA_USERNAME="PUT_YOUR_USERNAME_HERE"
+export JIRA_TOKEN="PUT_YOUR_TOKEN_HERE"
+export GITLAB_TOKEN="PUT_YOUR_TOKEN_HERE"
 ```
 
 After that, do not forget to run `source ~/.zshrc` (or `source ~/.bashrc` if you use Bash). 🤓
@@ -68,6 +72,25 @@ This commands packs a Gitlab Merge Request.
 
 ```bash
 mrburns mr
+```
+
+### Set your config file
+
+This command helps you creating a `mrburns.config.json` file
+
+```bash
+mrburns config
+```
+
+The config file is something like this
+
+```json
+{
+  "main_branch": "main",
+  "create_draft_mr": true,
+  "jira_api_base_url": "https://your-domain.atlassian.net",
+  ...
+}
 ```
 
 ## 🧑‍💻 Develop
