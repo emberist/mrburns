@@ -12,6 +12,19 @@ enum TaskProvider {
 }
 
 pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
+    intro("Configuration started")?;
+
+    if args.get {
+        let config = Config::read()?;
+
+        log::success(format!(
+            "Here your config: {}",
+            serde_json::to_string_pretty(&config.to_json())?
+        ))?;
+
+        return Ok(());
+    }
+
     if Config::exists() && !args.force {
         log::warning(
             "Configuration already exists. Skipping wizard. Use the --force option to override it",
@@ -19,8 +32,6 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
 
         return Ok(());
     }
-
-    intro("Starting configuration")?;
 
     if args.force && Config::exists() {
         let should_continue =

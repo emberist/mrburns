@@ -16,15 +16,17 @@ pub struct Config {
     pub jira_api_base_url: Option<String>,
 }
 
-impl Config {
-    pub fn default() -> Self {
+impl Default for Config {
+    fn default() -> Self {
         Self {
             main_branch: "master".to_string(),
             create_draft_mr: true,
             jira_api_base_url: None,
         }
     }
+}
 
+impl Config {
     fn from_json(json_config: JsonConfig) -> Self {
         let default_config = Self::default();
 
@@ -37,11 +39,11 @@ impl Config {
         }
     }
 
-    fn to_json(config: Self) -> JsonConfig {
+    pub fn to_json(&self) -> JsonConfig {
         JsonConfig {
-            main_branch: config.main_branch,
-            create_draft_mr: Some(config.create_draft_mr),
-            jira_api_base_url: config.jira_api_base_url,
+            main_branch: self.main_branch.clone(),
+            create_draft_mr: Some(self.create_draft_mr),
+            jira_api_base_url: self.jira_api_base_url.clone(),
         }
     }
 
@@ -61,7 +63,7 @@ impl Config {
     }
 
     pub fn write(config: Self) -> anyhow::Result<()> {
-        let json_config = Self::to_json(config);
+        let json_config = config.to_json();
 
         let mut file = OpenOptions::new()
             .write(true)
