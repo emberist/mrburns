@@ -1,9 +1,8 @@
 use reqwest::Client;
 use serde::Deserialize;
-use std::{env, str::FromStr};
-use url::Url;
+use std::env;
 
-use crate::jira::fetch_jira_task_by_issue_id;
+use crate::connectors::task::fetch_connector_task;
 
 #[derive(Deserialize, Debug)]
 pub struct Author {
@@ -33,19 +32,11 @@ pub async fn create_gitlab_mr(
         url_encoded_project_id
     );
 
-    let issue_id = Url::from_str(task_url)
-        .unwrap()
-        .path_segments()
-        .unwrap()
-        .last()
-        .unwrap()
-        .to_string();
-
-    let jira_issue = fetch_jira_task_by_issue_id(&issue_id).await?;
+    let jira_issue = fetch_connector_task(task_url).await?;
 
     let description = format!(
         r"### Changes\n- [x] {}\n\n---\n\n{}",
-        jira_issue.fields.summary, task_url
+        jira_issue.name, task_url
     );
 
     let body = format!(

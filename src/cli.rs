@@ -63,4 +63,7 @@ pub struct MrArgs {
 pub struct ConfigArgs {
     #[arg(long, default_value_t = false)]
     pub force: bool,
+
+    #[arg(long, default_value_t = false)]
+    pub get: bool,
 }

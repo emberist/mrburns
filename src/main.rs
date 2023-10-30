@@ -4,9 +4,11 @@ use cliclack::{log, outro};
 use commands::{browse, mr, start, wizard::start_config_wizard};
 use std::process;
 
+mod asana;
 mod cli;
 mod commands;
 mod config;
+mod connectors;
 mod git;
 mod gitlab;
 mod jira;
@@ -17,8 +19,6 @@ mod utils;
 async fn main() {
     let cli = Cli::parse();
 
-    // You can check for the existence of subcommands, and if found use their
-    // matches just as you would the top level cmd
     let result = match &cli.command {
         Commands::Start(args) => start::start_task(args).await,
         Commands::Mr(args) => mr::create_mr(args).await,
