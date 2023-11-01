@@ -1,6 +1,15 @@
 use regex::Regex;
 use unidecode::unidecode;
 
+pub fn stringify_query_params(params: Vec<(&str, &str)>) -> String {
+    let query_params_vector: Vec<String> = params
+        .iter()
+        .map(|(key, value)| format!("{}={}", key, urlencoding::encode(value)))
+        .collect();
+
+    query_params_vector.join("&")
+}
+
 pub fn slugify(a_string: &str) -> String {
     let text = unidecode(a_string).replace('&', "-and-");
 

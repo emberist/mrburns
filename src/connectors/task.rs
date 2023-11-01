@@ -1,7 +1,7 @@
 use crate::{asana::api::fetch_asana_task_by_id, jira::api::fetch_jira_task_by_id};
 
 use super::{
-    models::{TaskConnector, TaskConnectorTrait, TaskInfo},
+    models::{Task, TaskConnector},
     utils::parse_task_connector_url,
 };
 

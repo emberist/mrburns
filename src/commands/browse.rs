@@ -1,3 +1,4 @@
+use anyhow::Context;
 use cliclack::log;
 use url::Url;
 
@@ -13,11 +14,7 @@ pub fn browse() -> anyhow::Result<()> {
 
     let task_url = GitConfig::read(&task_url_config_key)?;
 
-    Url::parse(&task_url).unwrap_or_else(|_| {
-        log::error("No task URL found. Start a task with 'mrburns start-task <url>' before running this command").unwrap();
-
-        std::process::exit(0);
-    });
+    Url::parse(&task_url).context("No task URL found. Start a task with 'mrburns start-task <url>' before running this command")?;
 
     log::info(format!("Opening the browser at {}", task_url))?;
 

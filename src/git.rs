@@ -21,7 +21,7 @@ impl GitConfig {
             .status()?;
 
         if !cmd.success() {
-            anyhow::bail!("Error creating branch");
+            anyhow::bail!("Error writing config key {}", key);
         }
 
         Ok(())

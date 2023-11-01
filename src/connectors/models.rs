@@ -1,4 +1,9 @@
-use crate::strings::slugify;
+use anyhow::bail;
+
+use crate::{
+    github::create_github_pull_request_creation_url,
+    gitlab::create_gitlab_merge_request_creation_url, strings::slugify,
+};
 
 #[derive(Debug, Clone)]
 
@@ -10,13 +15,12 @@ pub enum TaskConnector {
     Asana(String),
 }
 
-pub struct TaskInfo {
-    pub url: String,
+pub struct TaskDetails {
     pub connector: TaskConnector,
     pub name: String,
 }
 
-impl TaskInfo {
+impl TaskDetails {
     pub fn sanitized_name(&self) -> String {
         let connector = self.connector.to_owned();
         let normalized_task_name = slugify(&self.name);
@@ -28,19 +32,33 @@ impl TaskInfo {
     }
 }
 
-pub trait TaskConnectorTrait {
-    fn get_info(&self, connector: TaskConnector, url: &str) -> TaskInfo;
+pub trait Task {
+    fn info(&self, connector: TaskConnector) -> TaskDetails;
 }
 
 #[derive(Debug, PartialEq)]
-pub enum RepoProvider {
-    Github,
-    Gitlab,
-    Bitbucket,
+pub enum RepoConnector {
+    Github(String),
+    Gitlab(String),
+    Bitbucket(String),
 }
 
-#[derive(Debug)]
-pub struct RepoInfo {
-    pub provider: RepoProvider,
-    pub project: String,
+pub trait Mergeble {
+    fn mr_url(&self, task: &TaskDetails) -> anyhow::Result<String>;
+}
+
+impl Mergeble for RepoConnector {
+    fn mr_url(&self, task: &TaskDetails) -> anyhow::Result<String> {
+        let url = match self {
+            RepoConnector::Github(project) => {
+                create_github_pull_request_creation_url(project, task)?
+            }
+            RepoConnector::Gitlab(project) => {
+                create_gitlab_merge_request_creation_url(project, task)?
+            }
+            _ => bail!("Not implemented yet."),
+        };
+
+        Ok(url)
+    }
 }

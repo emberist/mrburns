@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::connectors::models::{TaskConnector, TaskConnectorTrait, TaskInfo};
+use crate::connectors::models::{Task, TaskConnector, TaskDetails};
 
 #[derive(Debug, Deserialize)]
 pub struct AsanaTask {
@@ -8,11 +8,10 @@ pub struct AsanaTask {
     pub name: String,
 }
 
-impl TaskConnectorTrait for AsanaTask {
-    fn get_info(&self, connector: TaskConnector, url: &str) -> TaskInfo {
-        TaskInfo {
+impl Task for AsanaTask {
+    fn info(&self, connector: TaskConnector) -> TaskDetails {
+        TaskDetails {
             connector,
-            url: url.to_owned(),
             name: self.name.to_owned(),
         }
     }

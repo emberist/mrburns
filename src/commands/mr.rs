@@ -9,22 +9,14 @@ use std::{thread, time::Duration};
 use crate::{
     cli::MrArgs,
     connectors::{
-        models::RepoInfo,
-        repo::create_merge_request,
+        repo::create_merge_request_creation_url,
         task::fetch_connector_task,
-        utils::{get_task_url_config_key, parse_repo_url, parse_task_connector_url},
+        utils::{get_task_url_config_key, parse_task_connector_url},
     },
     git::{GitBranch, GitConfig},
 };
 
 fn fake_create_mr() -> anyhow::Result<()> {
-    let git_remote_url =
-        GitConfig::read("remote.origin.url").expect("Failed to retrieve git remote URL");
-
-    let RepoInfo { project, .. } = parse_repo_url(&git_remote_url).expect("Cannot parse repo url");
-
-    log::info(format!("Skip creating the MR for project {}", project))?;
-
     let mut mr_spinner = spinner();
 
     mr_spinner.start("Simulating the MR creation...");
@@ -47,11 +39,11 @@ fn fake_create_mr() -> anyhow::Result<()> {
 }
 
 pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
-    let current_branch_name = GitBranch::current().expect("Failed to retrieve current branch name");
+    let current_branch_name = GitBranch::current()?;
 
     let task_url_config_key = get_task_url_config_key(&current_branch_name);
 
-    let task_url = GitConfig::read(&task_url_config_key).expect("Failed to retrieve task URL");
+    let task_url = GitConfig::read(&task_url_config_key)?;
 
     parse_task_connector_url(&task_url)?;
 
@@ -82,17 +74,19 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     let mut mr_spinner = spinner();
 
-    mr_spinner.start("Creating the MR...");
+    mr_spinner.start("Getting task informations...");
 
-    let task_info = fetch_connector_task(&task_url)
+    let task = fetch_connector_task(&task_url)
         .await
         .context(format!("Failed to fetch task from url {}", task_url))?;
 
-    let url = create_merge_request(&task_info).await?;
+    let info = task.info();
 
-    mr_spinner.stop("MR created.");
+    mr_spinner.stop(format!("Task {} found.", info.name));
 
-    log::info(format!("Opening it in the browser at {}", url))?;
+    let url = create_merge_request_creation_url(&info)?;
+
+    log::info(format!("Opening: {}", url))?;
 
     open::that(url)?;
 

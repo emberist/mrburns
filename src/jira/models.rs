@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::connectors::models::{TaskConnector, TaskConnectorTrait, TaskInfo};
+use crate::connectors::models::{Task, TaskConnector, TaskDetails};
 
 #[derive(Deserialize, Debug)]
 pub struct Fields {
@@ -13,11 +13,10 @@ pub struct JiraTask {
     pub key: String,
 }
 
-impl TaskConnectorTrait for JiraTask {
-    fn get_info(&self, connector: TaskConnector, url: &str) -> TaskInfo {
-        TaskInfo {
+impl Task for JiraTask {
+    fn info(&self, connector: TaskConnector) -> TaskDetails {
+        TaskDetails {
             connector,
-            url: url.to_owned(),
             name: self.fields.summary.to_owned(),
         }
     }
