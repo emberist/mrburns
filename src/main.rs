@@ -9,11 +9,12 @@ mod cli;
 mod commands;
 mod config;
 mod connectors;
+mod constants;
 mod git;
+mod github;
 mod gitlab;
 mod jira;
 mod strings;
-mod utils;
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 

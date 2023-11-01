@@ -1,25 +1,27 @@
+use anyhow::Context;
 use cliclack::{
     confirm,
-    log::{self, info},
+    log::{self},
     spinner,
 };
 use std::{thread, time::Duration};
-use url::Url;
 
 use crate::{
     cli::MrArgs,
-    config::Config,
+    connectors::{
+        models::RepoInfo,
+        repo::create_merge_request,
+        task::fetch_connector_task,
+        utils::{get_task_url_config_key, parse_repo_url, parse_task_connector_url},
+    },
     git::{GitBranch, GitConfig},
-    gitlab::{add_merge_request_author, create_gitlab_mr},
-    utils::{get_task_url_config_key, parse_repo_url, Domain, RepoUrlInfo},
 };
 
 fn fake_create_mr() -> anyhow::Result<()> {
     let git_remote_url =
         GitConfig::read("remote.origin.url").expect("Failed to retrieve git remote URL");
 
-    let RepoUrlInfo { project, .. } =
-        parse_repo_url(&git_remote_url).expect("Cannot parse repo url");
+    let RepoInfo { project, .. } = parse_repo_url(&git_remote_url).expect("Cannot parse repo url");
 
     log::info(format!("Skip creating the MR for project {}", project))?;
 
@@ -51,19 +53,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     let task_url = GitConfig::read(&task_url_config_key).expect("Failed to retrieve task URL");
 
-    let issue_id = Url::parse(&task_url)
-        .unwrap()
-        .path_segments()
-        .unwrap()
-        .last()
-        .unwrap()
-        .to_string();
-
-    info(format!("Creating MR for issue {}", issue_id))?;
-
-    if issue_id.is_empty() {
-        anyhow::bail!("No task id found.");
-    }
+    parse_task_connector_url(&task_url)?;
 
     let target_branch = params
         .base_branch
@@ -71,8 +61,8 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
         .unwrap_or(GitBranch::default()?);
 
     let confirmed = confirm(format!(
-        "Creating MR for issue {}. {} <- {}",
-        issue_id, target_branch, current_branch_name
+        "Creating MR: {} <- {}",
+        target_branch, current_branch_name
     ))
     .interact()?;
 
@@ -86,55 +76,25 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
         return Ok(());
     }
 
-    let config = Config::read()?;
-
     if task_url.is_empty() {
         anyhow::bail!("No task URL found, consider creating the working branch using the `start-task` command");
     }
 
-    let git_remote_url =
-        GitConfig::read("remote.origin.url").expect("Failed to retrieve git remote URL");
+    let mut mr_spinner = spinner();
 
-    let RepoUrlInfo { domain, project } =
-        parse_repo_url(&git_remote_url).expect("Cannot parse repo url");
+    mr_spinner.start("Creating the MR...");
 
-    let create_response: crate::gitlab::CreateMrResponse = match domain {
-        Domain::Gitlab => {
-            let mut mr_spinner = spinner();
+    let task_info = fetch_connector_task(&task_url)
+        .await
+        .context(format!("Failed to fetch task from url {}", task_url))?;
 
-            mr_spinner.start("Creating the MR...");
+    let url = create_merge_request(&task_info).await?;
 
-            let create_response = create_gitlab_mr(
-                &project,
-                &task_url,
-                &current_branch_name,
-                &target_branch,
-                config.create_draft_mr,
-            )
-            .await?;
+    mr_spinner.stop("MR created.");
 
-            mr_spinner.stop("MR created.");
+    log::info(format!("Opening it in the browser at {}", url))?;
 
-            let mut author_spinner = spinner();
-
-            author_spinner.start("Adding MR author...");
-
-            add_merge_request_author(&project, create_response.iid, create_response.author.id)
-                .await?;
-
-            author_spinner.stop("Author added.");
-
-            create_response
-        }
-        _ => panic!("Not implemented yet"),
-    };
-
-    log::info(format!(
-        "Opening it in the browser at {}",
-        create_response.web_url
-    ))?;
-
-    open::that(create_response.web_url)?;
+    open::that(url)?;
 
     Ok(())
 }

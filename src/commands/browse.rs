@@ -2,8 +2,8 @@ use cliclack::log;
 use url::Url;
 
 use crate::{
+    connectors::utils::get_task_url_config_key,
     git::{GitBranch, GitConfig},
-    utils::get_task_url_config_key,
 };
 
 pub fn browse() -> anyhow::Result<()> {

@@ -20,7 +20,7 @@ pub async fn fetch_jira_task_by_id(api_base_url: &str, task_id: &str) -> anyhow:
             task_id
         ))?;
 
-    let issue = response.json().await?;
+    let issue = response.json().await.context("Failed to decode JiraTask")?;
 
     Ok(issue)
 }
