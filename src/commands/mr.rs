@@ -9,9 +9,9 @@ use std::{thread, time::Duration};
 use crate::{
     cli::MrArgs,
     connectors::{
-        repo::create_merge_request_creation_url,
+        models::Mergeble,
         task::fetch_connector_task,
-        utils::{get_task_url_config_key, parse_task_connector_url},
+        utils::{get_task_url_config_key, parse_repo_connector_url, parse_task_connector_url},
     },
     git::{GitBranch, GitConfig},
 };
@@ -76,15 +76,18 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     mr_spinner.start("Getting task informations...");
 
-    let task = fetch_connector_task(&task_url)
+    let task_info = fetch_connector_task(&task_url)
         .await
-        .context(format!("Failed to fetch task from url {}", task_url))?;
+        .context(format!("Failed to fetch task from url {}", task_url))?
+        .info();
 
-    let info = task.info();
+    mr_spinner.stop(format!("Task {} found.", task_info.name));
 
-    mr_spinner.stop(format!("Task {} found.", info.name));
+    let git_remote_url = GitConfig::read("remote.origin.url")?;
 
-    let url = create_merge_request_creation_url(&info)?;
+    let connector = parse_repo_connector_url(&git_remote_url).expect("Cannot parse repo url");
+
+    let url = connector.mr_url(&task_info)?;
 
     log::info(format!("Opening: {}", url))?;
 
