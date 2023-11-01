@@ -27,7 +27,9 @@ impl TaskDetails {
 
         match connector {
             TaskConnector::Asana(_) => normalized_task_name,
-            TaskConnector::Jira(task_id) => format!("{}-{}", task_id, normalized_task_name),
+            TaskConnector::Jira { task_id, .. } => {
+                format!("{}-{}", task_id, normalized_task_name)
+            }
         }
     }
 }

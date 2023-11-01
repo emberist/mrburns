@@ -1,9 +1,9 @@
-use anyhow::Context;
 use cliclack::{
     confirm,
     log::{self},
     spinner,
 };
+
 use std::{thread, time::Duration};
 
 use crate::{
@@ -76,10 +76,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     mr_spinner.start("Getting task informations...");
 
-    let task_info = fetch_connector_task(&task_url)
-        .await
-        .context(format!("Failed to fetch task from url {}", task_url))?
-        .info();
+    let task_info = fetch_connector_task(&task_url).await?;
 
     mr_spinner.stop(format!("Task {} found.", task_info.name));
 

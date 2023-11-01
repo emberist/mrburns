@@ -30,6 +30,31 @@ mod tests {
     use super::*;
 
     #[test]
+    fn it_returns_the_right_api_url() -> anyhow::Result<()> {
+        let fixtures = [
+            [
+                "https://some-domain.atlassian.net/browse/some-task-id",
+                "https://some-domain.atlassian.net",
+            ],
+            [
+                "https://some-other-domain.atlassian.net/browse/some-other-task-id",
+                "https://some-other-domain.atlassian.net",
+            ],
+            [
+                "https://a.atlassian.net/browse/1234",
+                "https://a.atlassian.net",
+            ],
+        ];
+
+        for fixture in fixtures.iter() {
+            let task_id = get_jira_api_base_url_from_task_url(fixture[0])?;
+
+            assert_eq!(task_id, fixture[1]);
+        }
+
+        Ok(())
+    }
+    #[test]
     fn it_returns_the_right_task_id() -> anyhow::Result<()> {
         let fixtures = [
             [
@@ -37,10 +62,10 @@ mod tests {
                 "some-task-id",
             ],
             [
-                "some-domain.atlassian.net/browse/some-other-task-id",
+                "https://some-domain.atlassian.net/browse/some-other-task-id",
                 "some-other-task-id",
             ],
-            ["a.atlassian.net/browse/1234", "1234"],
+            ["https://a.atlassian.net/browse/1234", "1234"],
         ];
 
         for fixture in fixtures.iter() {
