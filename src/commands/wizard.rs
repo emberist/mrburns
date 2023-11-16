@@ -43,10 +43,6 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
         }
     }
 
-    let main_branch = input("Which is the base branch you wanna use as default?")
-        .default_input("main")
-        .interact()?;
-
     let task_provider = select("Which task provider do you use?")
         .item(TaskProvider::Jira, "Jira", "")
         .item(TaskProvider::Asana, "Asana", "")
@@ -81,7 +77,6 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
         confirm("Do you want the merge request created to be draft as default?").interact()?;
 
     Config::write(Config {
-        main_branch,
         create_draft_mr,
         ..config
     })?;

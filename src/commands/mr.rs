@@ -81,7 +81,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     let create_response: crate::gitlab::CreateMrResponse = match domain {
         Domain::Gitlab => {
-            let target_branch = params.base_branch.clone().unwrap_or(config.main_branch);
+            let target_branch = params.base_branch.clone().unwrap_or(GitBranch::default()?);
 
             let mut mr_spinner = spinner();
 
