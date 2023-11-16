@@ -46,6 +46,22 @@ impl GitBranch {
         Ok(())
     }
 
+    pub fn default() -> anyhow::Result<String> {
+        let output = Command::new("git")
+            .args(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"])
+            .stdout(Stdio::piped())
+            .output()?;
+
+        let branch_name = String::from_utf8(output.stdout)?
+            .replace('\n', "")
+            .split('/')
+            .last()
+            .ok_or_else(|| anyhow::anyhow!("Cannot get default branch name"))?
+            .to_string();
+
+        Ok(branch_name)
+    }
+
     pub fn current() -> anyhow::Result<String> {
         let output = Command::new("git")
             .args(["branch", "--show-current"])

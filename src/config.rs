@@ -5,13 +5,11 @@ const CONFIG_FILE_NAME: &str = "mrburns.config.json";
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JsonConfig {
-    pub main_branch: String,
     pub create_draft_mr: Option<bool>,
     pub jira_api_base_url: Option<String>,
 }
 
 pub struct Config {
-    pub main_branch: String,
     pub create_draft_mr: bool,
     pub jira_api_base_url: Option<String>,
 }
@@ -19,7 +17,6 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            main_branch: "master".to_string(),
             create_draft_mr: true,
             jira_api_base_url: None,
         }
@@ -31,7 +28,6 @@ impl Config {
         let default_config = Self::default();
 
         Self {
-            main_branch: json_config.main_branch,
             create_draft_mr: json_config
                 .create_draft_mr
                 .unwrap_or(default_config.create_draft_mr),
@@ -41,7 +37,6 @@ impl Config {
 
     pub fn to_json(&self) -> JsonConfig {
         JsonConfig {
-            main_branch: self.main_branch.clone(),
             create_draft_mr: Some(self.create_draft_mr),
             jira_api_base_url: self.jira_api_base_url.clone(),
         }
