@@ -1,6 +1,6 @@
 use clap::Parser;
 use cli::{Cli, Commands};
-use cliclack::{log, outro};
+use cliclack::{intro, log, outro};
 use commands::{browse, mr, start, wizard::start_config_wizard};
 use std::process;
 
@@ -15,9 +15,13 @@ mod jira;
 mod strings;
 mod utils;
 
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[tokio::main]
 async fn main() {
     let cli = Cli::parse();
+
+    intro(format!("mrburns v{}", VERSION)).unwrap();
 
     let result = match &cli.command {
         Commands::Start(args) => start::start_task(args).await,

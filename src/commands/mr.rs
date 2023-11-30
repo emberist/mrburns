@@ -1,4 +1,8 @@
-use cliclack::{confirm, intro, log, spinner};
+use cliclack::{
+    confirm,
+    log::{self, info},
+    spinner,
+};
 use std::{thread, time::Duration};
 use url::Url;
 
@@ -55,7 +59,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
         .unwrap()
         .to_string();
 
-    intro(format!("Creating MR for issue {}", issue_id))?;
+    info(format!("Creating MR for issue {}", issue_id))?;
 
     if issue_id.is_empty() {
         anyhow::bail!("No task id found.");

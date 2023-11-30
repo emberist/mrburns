@@ -1,9 +1,12 @@
-use cliclack::{confirm, intro, log};
+use cliclack::{
+    confirm,
+    log::{self, info},
+};
 
 use crate::{cli::ConfigArgs, config::Config};
 
 pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
-    intro("Configuration started")?;
+    info("Configuration started")?;
 
     if args.get {
         let config = Config::read()?;

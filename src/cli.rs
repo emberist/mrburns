@@ -2,10 +2,12 @@ use clap::{Args, Parser, Subcommand, ValueEnum};
 use std::fmt;
 use url::Url;
 
+use crate::VERSION;
+
 #[derive(Parser)]
 #[command(name = "mrburns")]
 #[command(author = "emberist <emberistemac@proton.me>")]
-#[command(version = "0.1.0")]
+#[command(version = VERSION)]
 #[command(about = "Your friendly neighborhood tool", long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
