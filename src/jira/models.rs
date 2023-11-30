@@ -14,9 +14,9 @@ pub struct JiraTask {
 }
 
 impl TaskConnectorTrait for JiraTask {
-    fn get_info(&self) -> TaskInfo {
+    fn get_info(&self, connector: TaskConnector) -> TaskInfo {
         TaskInfo {
-            connector: TaskConnector::Jira(self.key.to_owned()),
+            connector,
             name: self.fields.summary.to_owned(),
         }
     }

@@ -1,4 +1,4 @@
-use cliclack::{intro, log, spinner};
+use cliclack::{confirm, intro, log, spinner};
 use std::{thread, time::Duration};
 use url::Url;
 
@@ -61,6 +61,21 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
         anyhow::bail!("No task id found.");
     }
 
+    let target_branch = params
+        .base_branch
+        .to_owned()
+        .unwrap_or(GitBranch::default()?);
+
+    let confirmed = confirm(format!(
+        "Creating MR for issue {}. {} <- {}",
+        issue_id, target_branch, current_branch_name
+    ))
+    .interact()?;
+
+    if !confirmed {
+        return Ok(());
+    }
+
     if params.dry {
         fake_create_mr()?;
 
@@ -81,8 +96,6 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     let create_response: crate::gitlab::CreateMrResponse = match domain {
         Domain::Gitlab => {
-            let target_branch = params.base_branch.clone().unwrap_or(GitBranch::default()?);
-
             let mut mr_spinner = spinner();
 
             mr_spinner.start("Creating the MR...");

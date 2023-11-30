@@ -9,9 +9,9 @@ pub struct AsanaTask {
 }
 
 impl TaskConnectorTrait for AsanaTask {
-    fn get_info(&self) -> TaskInfo {
+    fn get_info(&self, connector: TaskConnector) -> TaskInfo {
         TaskInfo {
-            connector: TaskConnector::Asana(self.gid.to_owned()),
+            connector,
             name: self.name.to_owned(),
         }
     }
