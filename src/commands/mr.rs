@@ -1,28 +1,22 @@
 use cliclack::{
     confirm,
-    log::{self, info},
+    log::{self},
     spinner,
 };
+
 use std::{thread, time::Duration};
-use url::Url;
 
 use crate::{
     cli::MrArgs,
-    config::Config,
+    connectors::{
+        models::Mergeble,
+        task::fetch_connector_task,
+        utils::{get_task_url_config_key, parse_repo_connector_url, parse_task_connector_url},
+    },
     git::{GitBranch, GitConfig},
-    gitlab::{add_merge_request_author, create_gitlab_mr},
-    utils::{get_task_url_config_key, parse_repo_url, Domain, RepoUrlInfo},
 };
 
 fn fake_create_mr() -> anyhow::Result<()> {
-    let git_remote_url =
-        GitConfig::read("remote.origin.url").expect("Failed to retrieve git remote URL");
-
-    let RepoUrlInfo { project, .. } =
-        parse_repo_url(&git_remote_url).expect("Cannot parse repo url");
-
-    log::info(format!("Skip creating the MR for project {}", project))?;
-
     let mut mr_spinner = spinner();
 
     mr_spinner.start("Simulating the MR creation...");
@@ -45,25 +39,13 @@ fn fake_create_mr() -> anyhow::Result<()> {
 }
 
 pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
-    let current_branch_name = GitBranch::current().expect("Failed to retrieve current branch name");
+    let current_branch_name = GitBranch::current()?;
 
     let task_url_config_key = get_task_url_config_key(&current_branch_name);
 
-    let task_url = GitConfig::read(&task_url_config_key).expect("Failed to retrieve task URL");
+    let task_url = GitConfig::read(&task_url_config_key)?;
 
-    let issue_id = Url::parse(&task_url)
-        .unwrap()
-        .path_segments()
-        .unwrap()
-        .last()
-        .unwrap()
-        .to_string();
-
-    info(format!("Creating MR for issue {}", issue_id))?;
-
-    if issue_id.is_empty() {
-        anyhow::bail!("No task id found.");
-    }
+    parse_task_connector_url(&task_url)?;
 
     let target_branch = params
         .base_branch
@@ -71,8 +53,8 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
         .unwrap_or(GitBranch::default()?);
 
     let confirmed = confirm(format!(
-        "Creating MR for issue {}. {} <- {}",
-        issue_id, target_branch, current_branch_name
+        "Creating MR: {} <- {}",
+        target_branch, current_branch_name
     ))
     .interact()?;
 
@@ -86,55 +68,27 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
         return Ok(());
     }
 
-    let config = Config::read()?;
-
     if task_url.is_empty() {
         anyhow::bail!("No task URL found, consider creating the working branch using the `start-task` command");
     }
 
-    let git_remote_url =
-        GitConfig::read("remote.origin.url").expect("Failed to retrieve git remote URL");
+    let mut mr_spinner = spinner();
 
-    let RepoUrlInfo { domain, project } =
-        parse_repo_url(&git_remote_url).expect("Cannot parse repo url");
+    mr_spinner.start("Getting task informations...");
 
-    let create_response: crate::gitlab::CreateMrResponse = match domain {
-        Domain::Gitlab => {
-            let mut mr_spinner = spinner();
+    let task_info = fetch_connector_task(&task_url).await?;
 
-            mr_spinner.start("Creating the MR...");
+    mr_spinner.stop(format!("Task {} found.", task_info.name));
 
-            let create_response = create_gitlab_mr(
-                &project,
-                &task_url,
-                &current_branch_name,
-                &target_branch,
-                config.create_draft_mr,
-            )
-            .await?;
+    let git_remote_url = GitConfig::read("remote.origin.url")?;
 
-            mr_spinner.stop("MR created.");
+    let connector = parse_repo_connector_url(&git_remote_url).expect("Cannot parse repo url");
 
-            let mut author_spinner = spinner();
+    let url = connector.mr_url(&task_info)?;
 
-            author_spinner.start("Adding MR author...");
+    log::info(format!("Opening: {}", url))?;
 
-            add_merge_request_author(&project, create_response.iid, create_response.author.id)
-                .await?;
-
-            author_spinner.stop("Author added.");
-
-            create_response
-        }
-        _ => panic!("Not implemented yet"),
-    };
-
-    log::info(format!(
-        "Opening it in the browser at {}",
-        create_response.web_url
-    ))?;
-
-    open::that(create_response.web_url)?;
+    open::that(url)?;
 
     Ok(())
 }

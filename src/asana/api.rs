@@ -2,11 +2,9 @@ use anyhow::Context;
 use reqwest::Client;
 use std::env;
 
-use crate::asana::models::Data;
+use crate::{asana::models::Data, constants::ASANA_API_BASE_URL};
 
 use super::models::AsanaTask;
-
-const ASANA_API_BASE_URL: &str = "https://app.asana.com/api/1.0";
 
 pub async fn fetch_asana_task_by_id(task_id: &str) -> anyhow::Result<AsanaTask> {
     let asana_token = env::var("ASANA_TOKEN").context("An ASANA_TOKEN env var is required.")?;

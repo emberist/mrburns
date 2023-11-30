@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::{fs::OpenOptions, path::Path};
 
-const CONFIG_FILE_NAME: &str = "mrburns.config.json";
+use crate::constants::CONFIG_FILE_NAME;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JsonConfig {

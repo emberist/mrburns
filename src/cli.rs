@@ -37,7 +37,7 @@ pub enum Commands {
     Start(StartArgs),
     #[command(about = "Open the link of the current task in the browser")]
     Browse,
-    #[command(about = "Create a merge request for the current branch")]
+    #[command(about = "Helps opening a MR for the current branch")]
     Mr(MrArgs),
     #[command(about = "Set mrburns configuration")]
     Config(ConfigArgs),

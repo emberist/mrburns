@@ -5,9 +5,8 @@ use cliclack::{
 
 use crate::{
     cli::StartArgs,
-    connectors::task::fetch_connector_task,
+    connectors::{task::fetch_connector_task, utils::get_task_url_config_key},
     git::{GitBranch, GitConfig},
-    utils::get_task_url_config_key,
 };
 
 pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
@@ -19,7 +18,7 @@ pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
 
     let task_info = fetch_connector_task(params.link.as_str()).await?;
 
-    spinner.stop(format!("Found task with summary: {}\n", task_info.name));
+    spinner.stop(format!("Found task with summary: {}", task_info.name));
 
     let branch_name = format!("{}/{}", params.task_type, task_info.sanitized_name());
 

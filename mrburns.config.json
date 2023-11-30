@@ -1,5 +1,0 @@
-{
-  "main_branch": "main",
-  "create_draft_mr": true,
-  "jira_api_base_url": "https://your-company.atlassian.net"
-}

@@ -4,11 +4,15 @@ use std::env;
 
 use super::models::JiraTask;
 
+pub fn get_jira_api_url(api_base_url: &str, task_id: &str) -> String {
+    format!("{}/rest/api/latest/issue/{}", api_base_url, task_id)
+}
+
 pub async fn fetch_jira_task_by_id(api_base_url: &str, task_id: &str) -> anyhow::Result<JiraTask> {
     let jira_user = env::var("JIRA_USERNAME").context("An JIRA_USERNAME env var is required.")?;
     let jira_token = env::var("JIRA_TOKEN").context("An JIRA_TOKEN env var is required.")?;
 
-    let jira_api_url = format!("{}/rest/api/latest/issue/{}", api_base_url, task_id);
+    let jira_api_url = get_jira_api_url(api_base_url, task_id);
 
     let response = Client::new()
         .get(&jira_api_url)
@@ -20,7 +24,7 @@ pub async fn fetch_jira_task_by_id(api_base_url: &str, task_id: &str) -> anyhow:
             task_id
         ))?;
 
-    let issue = response.json().await?;
+    let issue = response.json().await.context("Failed to decode JiraTask")?;
 
     Ok(issue)
 }
