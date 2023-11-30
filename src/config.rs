@@ -6,19 +6,16 @@ const CONFIG_FILE_NAME: &str = "mrburns.config.json";
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JsonConfig {
     pub create_draft_mr: Option<bool>,
-    pub jira_api_base_url: Option<String>,
 }
 
 pub struct Config {
     pub create_draft_mr: bool,
-    pub jira_api_base_url: Option<String>,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
             create_draft_mr: true,
-            jira_api_base_url: None,
         }
     }
 }
@@ -31,14 +28,12 @@ impl Config {
             create_draft_mr: json_config
                 .create_draft_mr
                 .unwrap_or(default_config.create_draft_mr),
-            jira_api_base_url: json_config.jira_api_base_url,
         }
     }
 
     pub fn to_json(&self) -> JsonConfig {
         JsonConfig {
             create_draft_mr: Some(self.create_draft_mr),
-            jira_api_base_url: self.jira_api_base_url.clone(),
         }
     }
 
@@ -65,8 +60,6 @@ impl Config {
             .create(true)
             .truncate(true)
             .open(CONFIG_FILE_NAME)?;
-
-        // let mut file = File::create(CONFIG_FILE_NAME)?;
 
         serde_json::to_writer_pretty(&mut file, &json_config)?;
 

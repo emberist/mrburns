@@ -12,12 +12,15 @@ pub async fn fetch_connector_task(task_url: &str) -> anyhow::Result<TaskInfo> {
         TaskConnector::Asana(task_id) => {
             let asana_task = fetch_asana_task_by_id(task_id).await?;
 
-            Ok(asana_task.get_info())
+            Ok(asana_task.get_info(parsed_url))
         }
-        TaskConnector::Jira(task_id) => {
-            let jira_task = fetch_jira_task_by_id(task_id).await?;
+        TaskConnector::Jira {
+            api_base_url,
+            task_id,
+        } => {
+            let jira_task = fetch_jira_task_by_id(api_base_url, task_id).await?;
 
-            Ok(jira_task.get_info())
+            Ok(jira_task.get_info(parsed_url))
         }
     }
 }

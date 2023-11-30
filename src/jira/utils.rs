@@ -1,14 +1,24 @@
 use regex::Regex;
 
 pub fn get_jira_task_url_regex() -> Regex {
-    Regex::new(r"^(?:https?:\/\/)?[^\/]+\.atlassian\.net\/browse\/([^\/]+)$").unwrap()
+    Regex::new(r"^((?:https?:\/\/)?[^\/]+\.atlassian\.net)\/browse\/([^\/]+)$").unwrap()
+}
+
+pub fn get_jira_task_domain_from_url(url: &str) -> anyhow::Result<&str> {
+    let matched_domain = get_jira_task_url_regex()
+        .captures(url)
+        .ok_or_else(|| anyhow::anyhow!("No regex match found"))?
+        .get(1)
+        .ok_or_else(|| anyhow::anyhow!("Match not exists"))?;
+
+    Ok(matched_domain.as_str())
 }
 
 pub fn get_jira_task_id_from_url(url: &str) -> anyhow::Result<&str> {
     let matched_task = get_jira_task_url_regex()
         .captures(url)
         .ok_or_else(|| anyhow::anyhow!("No regex match found"))?
-        .get(1)
+        .get(2)
         .ok_or_else(|| anyhow::anyhow!("Match not exists"))?;
 
     Ok(matched_task.as_str())

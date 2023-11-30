@@ -1,4 +1,7 @@
-use cliclack::{intro, log, spinner};
+use cliclack::{
+    log::{self, info},
+    spinner,
+};
 
 use crate::{
     cli::StartArgs,
@@ -8,7 +11,7 @@ use crate::{
 };
 
 pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
-    intro("Starting a new task")?;
+    info("Starting a new task")?;
 
     let mut spinner = spinner();
 
