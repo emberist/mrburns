@@ -3,6 +3,7 @@ use regex::Regex;
 
 use crate::{
     asana::utils::{get_asana_task_id_from_url, get_asana_task_url_regex},
+    github::utils::{get_github_issue_info_from_url, get_github_issue_url_regex},
     jira::utils::{
         get_jira_task_domain_from_url, get_jira_task_id_from_url, get_jira_task_url_regex,
     },
@@ -11,6 +12,8 @@ use crate::{
 use super::models::{RepoConnector, TaskConnector};
 
 pub fn parse_task_connector_url(url: &str) -> anyhow::Result<TaskConnector> {
+    // TODO: use enum matches
+
     if get_asana_task_url_regex().is_match(url) {
         let task_id = get_asana_task_id_from_url(url)?;
 
@@ -24,6 +27,15 @@ pub fn parse_task_connector_url(url: &str) -> anyhow::Result<TaskConnector> {
         return Ok(TaskConnector::Jira {
             api_base_url: api_base_url.to_string(),
             task_id: task_id.to_string(),
+        });
+    }
+
+    if get_github_issue_url_regex().is_match(url) {
+        let (repo, issue_id) = get_github_issue_info_from_url(url)?;
+
+        return Ok(TaskConnector::Github {
+            repo: repo.to_string(),
+            issue_id,
         });
     }
 
