@@ -1,18 +1,22 @@
 use anyhow::bail;
 
 use crate::{
-    github::create_github_pull_request_creation_url,
+    github::utils::create_github_pull_request_creation_url,
     gitlab::create_gitlab_merge_request_creation_url, strings::slugify,
 };
 
 #[derive(Debug, Clone)]
 
 pub enum TaskConnector {
+    Asana(String),
     Jira {
         api_base_url: String,
         task_id: String,
     },
-    Asana(String),
+    Github {
+        repo: String,
+        issue_id: u64,
+    },
 }
 
 pub struct TaskDetails {
@@ -27,6 +31,7 @@ impl TaskDetails {
 
         match connector {
             TaskConnector::Asana(_) => normalized_task_name,
+            TaskConnector::Github { .. } => normalized_task_name,
             TaskConnector::Jira { task_id, .. } => {
                 format!("{}-{}", task_id, normalized_task_name)
             }
