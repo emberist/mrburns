@@ -47,7 +47,7 @@ mod tests {
         ];
 
         for fixture in fixtures.iter() {
-            let task_id = get_jira_api_base_url_from_task_url(fixture[0])?;
+            let task_id = get_jira_task_domain_from_url(fixture[0])?;
 
             assert_eq!(task_id, fixture[1]);
         }
