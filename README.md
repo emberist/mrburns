@@ -86,9 +86,7 @@ The config file is something like this
 
 ```json
 {
-  "main_branch": "main",
   "create_draft_mr": true,
-  "jira_api_base_url": "https://your-domain.atlassian.net",
   ...
 }
 ```
