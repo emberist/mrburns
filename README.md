@@ -12,7 +12,15 @@
 
 ### Installation
 
-First, clone this repo and add the required permission to the `install.sh` script
+First, install rustup and cargo, [here](https://www.rust-lang.org/tools/install) the docs
+
+then run this command
+
+```bash
+cargo install mrburns --git https://github.com/emberist/mrburns
+```
+
+or, clone this repo and add the required permission to the `install.sh` script
 
 ```bash
 chmod a+x ./install.sh
@@ -24,9 +32,7 @@ Then run the `install.sh` script:
 ./install.sh
 ```
 
-### Comming soon
-
-Support for github, asana, bitbucket and more!
+### Supported tools
 
 ### Set the environment variables
 

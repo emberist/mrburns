@@ -6,9 +6,9 @@ use crate::{
 pub fn create_gitlab_merge_request_creation_url(
     project_id: &str,
     task_info: &TaskDetails,
+    target_branch: &str,
 ) -> anyhow::Result<String> {
     let current_branch_name = GitBranch::current()?;
-    let base_branch = GitBranch::default()?;
 
     let task_url = get_current_task_url()?;
 
@@ -28,7 +28,7 @@ pub fn create_gitlab_merge_request_creation_url(
                 format!("Draft: {}", task_info.name).as_str()
             ),
             ("merge_request[source_branch]", &current_branch_name),
-            ("merge_request[target_branch]", &base_branch),
+            ("merge_request[target_branch]", &target_branch),
             ("merge_request[description]", &description),
             (
                 "merge_request[draft]",
