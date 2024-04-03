@@ -84,7 +84,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     let connector = parse_repo_connector_url(&git_remote_url).expect("Cannot parse repo url");
 
-    let url = connector.mr_url(&task_info)?;
+    let url = connector.mr_url(&task_info, &target_branch)?;
 
     log::info(format!("Opening: {}", url))?;
 

@@ -51,17 +51,17 @@ pub enum RepoConnector {
 }
 
 pub trait Mergeble {
-    fn mr_url(&self, task: &TaskDetails) -> anyhow::Result<String>;
+    fn mr_url(&self, task: &TaskDetails, target_branch: &str) -> anyhow::Result<String>;
 }
 
 impl Mergeble for RepoConnector {
-    fn mr_url(&self, task: &TaskDetails) -> anyhow::Result<String> {
+    fn mr_url(&self, task: &TaskDetails, target_branch: &str) -> anyhow::Result<String> {
         let url = match self {
             RepoConnector::Github(project) => {
-                create_github_pull_request_creation_url(project, task)?
+                create_github_pull_request_creation_url(project, task, target_branch)?
             }
             RepoConnector::Gitlab(project) => {
-                create_gitlab_merge_request_creation_url(project, task)?
+                create_gitlab_merge_request_creation_url(project, task, target_branch)?
             }
             _ => bail!("Not implemented yet."),
         };

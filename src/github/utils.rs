@@ -12,14 +12,16 @@ pub fn get_github_issue_url_regex() -> Regex {
 pub fn create_github_pull_request_creation_url(
     project_id: &str,
     task_info: &TaskDetails,
+    target_branch: &str,
 ) -> anyhow::Result<String> {
     let current_branch = GitBranch::current()?;
 
     let task_url = get_current_task_url()?;
 
     Ok(format!(
-        "https://github.com/{}/compare/{}?{}",
+        "https://github.com/{}/compare/{}...{}?{}",
         project_id,
+        target_branch,
         current_branch,
         stringify_query_params(vec![
             ("expand", "1"),
