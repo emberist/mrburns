@@ -4,6 +4,7 @@ use std::{fs::OpenOptions, path::Path};
 use crate::constants::CONFIG_FILE_NAME;
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct JsonConfig {
     pub create_draft_mr: Option<bool>,
 }

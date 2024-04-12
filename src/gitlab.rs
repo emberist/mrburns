@@ -1,6 +1,7 @@
+use url::Url;
+
 use crate::{
-    config::Config, connectors::models::TaskDetails, git::GitBranch,
-    strings::stringify_query_params, utils::get_current_task_url,
+    config::Config, connectors::models::TaskDetails, git::GitBranch, utils::get_current_task_url,
 };
 
 pub fn create_gitlab_merge_request_creation_url(
@@ -19,23 +20,26 @@ pub fn create_gitlab_merge_request_creation_url(
         task_info.name, task_url
     );
 
-    Ok(format!(
-        "https://gitlab.com/{}/merge_requests/new?{}",
-        project_id,
-        stringify_query_params(vec![
+    let gitlab_merge_request_url = format!("https://gitlab.com/{}/merge_requests/new", project_id);
+
+    let url = Url::parse_with_params(
+        &gitlab_merge_request_url,
+        &[
             (
                 "merge_request[title]",
-                format!("Draft: {}", task_info.name).as_str()
+                format!("Draft: {}", task_info.name).as_str(),
             ),
             ("merge_request[source_branch]", &current_branch_name),
             ("merge_request[target_branch]", &target_branch),
             ("merge_request[description]", &description),
             (
                 "merge_request[draft]",
-                format!("{}", config.create_draft_mr).as_str()
+                format!("{}", config.create_draft_mr).as_str(),
             ),
             ("merge_request[squash_on_merge]", "true"),
             ("merge_request[remove_source_branch]", "true"),
-        ])
-    ))
+        ],
+    )?;
+
+    Ok(url.to_string())
 }

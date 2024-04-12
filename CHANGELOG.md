@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2
+
+- Use native url to generate query params
+- Update dependencies
+
 ## 0.2.0
 
 ### Changes

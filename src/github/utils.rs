@@ -1,9 +1,7 @@
 use regex::Regex;
+use url::Url;
 
-use crate::{
-    connectors::models::TaskDetails, git::GitBranch, strings::stringify_query_params,
-    utils::get_current_task_url,
-};
+use crate::{connectors::models::TaskDetails, git::GitBranch, utils::get_current_task_url};
 
 pub fn get_github_issue_url_regex() -> Regex {
     Regex::new(r"github\.com\/(.+)\/issues\/(\d+)").unwrap()
@@ -18,12 +16,14 @@ pub fn create_github_pull_request_creation_url(
 
     let task_url = get_current_task_url()?;
 
-    Ok(format!(
-        "https://github.com/{}/compare/{}...{}?{}",
-        project_id,
-        target_branch,
-        current_branch,
-        stringify_query_params(vec![
+    let github_base_url = format!(
+        "https://github.com/{}/compare/{}...{}",
+        project_id, target_branch, current_branch
+    );
+
+    let url = Url::parse_with_params(
+        &github_base_url,
+        [
             ("expand", "1"),
             ("title", &task_info.name),
             (
@@ -32,10 +32,12 @@ pub fn create_github_pull_request_creation_url(
                     "### Changes\n- [x] {}\n\n---\n\n{}",
                     task_info.name, task_url
                 )
-                .as_str()
-            )
-        ])
-    ))
+                .as_str(),
+            ),
+        ],
+    )?;
+
+    Ok(url.to_string())
 }
 
 pub fn get_github_issue_info_from_url(url: &str) -> anyhow::Result<(&str, u64)> {

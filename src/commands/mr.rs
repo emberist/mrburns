@@ -17,7 +17,7 @@ use crate::{
 };
 
 fn fake_create_mr() -> anyhow::Result<()> {
-    let mut mr_spinner = spinner();
+    let mr_spinner = spinner();
 
     mr_spinner.start("Simulating the MR creation...");
 
@@ -25,7 +25,7 @@ fn fake_create_mr() -> anyhow::Result<()> {
 
     mr_spinner.stop("MR created.");
 
-    let mut author_spinner = spinner();
+    let author_spinner = spinner();
 
     author_spinner.start("Simulating MR author addition...");
 
@@ -72,7 +72,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
         anyhow::bail!("No task URL found, consider creating the working branch using the `start-task` command");
     }
 
-    let mut mr_spinner = spinner();
+    let mr_spinner = spinner();
 
     mr_spinner.start("Getting task informations...");
 
