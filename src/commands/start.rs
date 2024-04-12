@@ -12,7 +12,7 @@ use crate::{
 pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
     info("Starting a new task")?;
 
-    let mut spinner = spinner();
+    let spinner = spinner();
 
     spinner.start("Fetching the task...");
 
