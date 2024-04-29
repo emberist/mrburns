@@ -2,7 +2,7 @@ use regex::Regex;
 use unidecode::unidecode;
 
 pub fn slugify(a_string: &str) -> String {
-    let text = unidecode(a_string).replace('&', "-and-");
+    let text = unidecode(a_string).replace('&', "-and-").replace('_', "-");
 
     let spaces_re = Regex::new(r"\s+").unwrap();
     let special_chars_re = Regex::new(r"[^\w-]+").unwrap();
@@ -35,6 +35,7 @@ mod tests {
             "hello-world-and-friends"
         );
         assert_eq!(slugify("   "), "");
+        assert_eq!(slugify("hello_world"), "hello-world");
         assert_eq!(slugify("à"), "a");
         assert_eq!(slugify("A"), "a");
         assert_eq!(slugify("Ciao > foo--bar<"), "ciao-foo-bar");
