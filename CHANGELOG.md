@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4
+
+- Refactor folder structure
+
 ## 0.3.3
 
 - Replace `_` with `-`
