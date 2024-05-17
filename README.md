@@ -12,6 +12,14 @@
 mrburns allows you to effortlessly create task-specific branches and merge requests in just seconds!
 </div>
 
+## Compatibile tools
+
+|               | Github repos | Gitlab repos | Bitbucket repos |
+| ------------- | ------------ | ------------ | --------------- |
+| Github issues | ✅           | ✅           | 🚧 WIP          |
+| Asana         | ✅           | ✅           | 🚧 WIP          |
+| Jira          | ✅           | ✅           | 🚧 WIP          |
+
 ## ⚙️ Setup
 
 ### Installation
@@ -46,7 +54,7 @@ Based on which tool you are using, you have to add the following environment var
 export JIRA_USERNAME="PUT_YOUR_USERNAME_HERE"
 export JIRA_TOKEN="PUT_YOUR_TOKEN_HERE"
 
-export GITHUB_TOKEN="PUT_YOUR_TOKEN_HERE" # used to access github issues
+export GITHUB_TOKEN="PUT_YOUR_TOKEN_HERE" # read-only token used to access your github issues
 ```
 
 After that, do not forget to run `source ~/.zshrc` (or `source ~/.bashrc` if you use Bash). 🤓
