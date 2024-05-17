@@ -54,10 +54,7 @@ pub struct StartArgs {
 
 #[derive(Args, Debug)]
 pub struct MrArgs {
-    #[arg(long, default_value_t = false)]
-    pub dry: bool,
-
-    #[arg(long, short = 'b', name = "base-branch")]
+    #[arg(long = "base", short = 'b', name = "base-branch")]
     pub base_branch: Option<String>,
 }
 

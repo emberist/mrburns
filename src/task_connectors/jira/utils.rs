@@ -1,25 +1,22 @@
 use regex::Regex;
 
-pub fn get_jira_task_url_regex() -> Regex {
+pub fn make_jira_task_url_regex() -> Regex {
     Regex::new(r"^((?:https?:\/\/)?[^\/]+\.atlassian\.net)\/browse\/([^\/]+)$").unwrap()
 }
 
-pub fn get_jira_task_info_from_url(url: &str) -> anyhow::Result<(&str, &str)> {
-    let captures = get_jira_task_url_regex()
-        .captures(url)
-        .ok_or_else(|| anyhow::anyhow!("No regex match found"))?;
+pub fn get_jira_task_info_from_url(url: &str) -> Option<(&str, &str)> {
+    match make_jira_task_url_regex().captures(url) {
+        Some(caps) => {
+            let task_domain = caps.get(1).map(|m| m.as_str());
+            let task_id = caps.get(2).map(|m| m.as_str());
 
-    let task_domain = captures
-        .get(1)
-        .ok_or_else(|| anyhow::anyhow!("Match not exists"))?
-        .as_str();
-
-    let task_id = captures
-        .get(2)
-        .ok_or_else(|| anyhow::anyhow!("Match not exists"))?
-        .as_str();
-
-    Ok((task_domain, task_id))
+            return match (task_domain, task_id) {
+                (Some(domain), Some(id)) => Some((domain, id)),
+                _ => None,
+            };
+        }
+        _ => None,
+    }
 }
 
 #[cfg(test)]
@@ -45,7 +42,7 @@ mod tests {
         ];
 
         for fixture in fixtures.iter() {
-            let (domain, task_id) = get_jira_task_info_from_url(fixture.0)?;
+            let (domain, task_id) = get_jira_task_info_from_url(fixture.0).unwrap();
 
             assert_eq!(domain, fixture.1 .0);
             assert_eq!(task_id, fixture.1 .1);
@@ -71,9 +68,7 @@ mod tests {
         for fixture in fixtures.iter() {
             let result = get_jira_task_info_from_url(fixture);
 
-            let error = result.unwrap_err();
-
-            assert_eq!(error.to_string(), "No regex match found".to_string());
+            assert_eq!(result.is_none(), true);
         }
     }
 }
