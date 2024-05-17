@@ -1,17 +1,14 @@
 use regex::Regex;
 
-pub fn get_asana_task_url_regex() -> Regex {
+fn make_asana_task_url_regex() -> Regex {
     Regex::new(r"app\.asana\.com\/(?:\d+)\/(?:\d+)\/(\d+)").unwrap()
 }
 
-pub fn get_asana_task_id_from_url(url: &str) -> anyhow::Result<&str> {
-    let matched_task = get_asana_task_url_regex()
+pub fn get_asana_task_id_from_url(url: &str) -> Option<&str> {
+    make_asana_task_url_regex()
         .captures(url)
-        .ok_or_else(|| anyhow::anyhow!("No regex match found"))?
-        .get(1)
-        .ok_or_else(|| anyhow::anyhow!("Match not exists"))?;
-
-    Ok(matched_task.as_str())
+        .and_then(|captures| captures.get(1))
+        .map(|m| m.as_str())
 }
 
 #[cfg(test)]
@@ -35,7 +32,7 @@ mod tests {
         ];
 
         for fixture in fixtures.iter() {
-            let task_id = get_asana_task_id_from_url(fixture[0])?;
+            let task_id = get_asana_task_id_from_url(fixture[0]).unwrap();
 
             assert_eq!(task_id, fixture[1]);
         }
@@ -55,9 +52,7 @@ mod tests {
         for fixture in fixtures.iter() {
             let result = get_asana_task_id_from_url(fixture);
 
-            let error = result.unwrap_err();
-
-            assert_eq!(error.to_string(), "No regex match found".to_string());
+            assert_eq!(result.is_none(), true);
         }
     }
 }

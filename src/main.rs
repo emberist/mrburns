@@ -4,17 +4,14 @@ use cliclack::{intro, log, outro};
 use commands::{browse, mr, start, wizard::start_config_wizard};
 use std::process;
 
-mod asana;
 mod cli;
 mod commands;
 mod config;
-mod connectors;
 mod constants;
 mod git;
-mod github;
-mod gitlab;
-mod jira;
+mod repo_connectors;
 mod strings;
+mod task_connectors;
 mod utils;
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

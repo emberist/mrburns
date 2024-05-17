@@ -1,7 +1,8 @@
-use crate::{
-    connectors::utils::get_task_url_config_key,
-    git::{GitBranch, GitConfig},
-};
+use crate::git::{GitBranch, GitConfig};
+
+pub fn get_task_url_config_key(branch_name: &str) -> String {
+    format!("branch.{}.task-url", branch_name)
+}
 
 pub fn get_current_task_url() -> anyhow::Result<String> {
     let current_branch_name = GitBranch::current()?;
