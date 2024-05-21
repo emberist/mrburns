@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+### Features
+
+- Add `branchPrefixes` config option
+
 ## 0.3.4
 
 - Refactor folder structure

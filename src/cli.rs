@@ -2,7 +2,7 @@ use clap::{Args, Parser, Subcommand, ValueEnum};
 use std::fmt;
 use url::Url;
 
-use crate::VERSION;
+use crate::{config::Config, VERSION};
 
 #[derive(Parser)]
 #[command(name = "mrburns")]
@@ -19,14 +19,18 @@ pub enum TaskType {
     Bugfix,
     Chore,
     Feature,
+    Release,
 }
 
 impl fmt::Display for TaskType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let config = Config::read();
+
         match self {
-            TaskType::Bugfix => write!(f, "bugfix"),
-            TaskType::Chore => write!(f, "chore"),
-            TaskType::Feature => write!(f, "feature"),
+            TaskType::Bugfix => write!(f, "{}", config.branch_prefixes.bugfix),
+            TaskType::Chore => write!(f, "{}", config.branch_prefixes.chore),
+            TaskType::Feature => write!(f, "{}", config.branch_prefixes.feature),
+            TaskType::Release => write!(f, "{}", config.branch_prefixes.release),
         }
     }
 }

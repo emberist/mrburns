@@ -17,7 +17,7 @@ impl GitlabRepo {
 
         let task_url = get_current_task_url()?;
 
-        let config = Config::read()?;
+        let config = Config::read();
 
         let description = format!(
             "### Changes\n- [x] {}\n\n---\n\n{}",
