@@ -25,11 +25,6 @@ impl BaseTask for GithubIssue {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub struct Data<T> {
-    pub data: T,
-}
-
 impl GithubIssue {
     pub async fn fetch(repo: &str, issue_id: &u64) -> anyhow::Result<Self> {
         let github_token =
