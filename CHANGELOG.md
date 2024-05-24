@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/emberist/mrburns/compare/v0.1.0...v1.0.0) (2024-05-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove old changelog version
+
+### Features
+
+* remove old changelog version ([48ec130](https://github.com/emberist/mrburns/commit/48ec130d90394e120c76713ed58155c89fa6c751))
+
 ## 0.1.0 (2024-05-22)
 
 ### Features
