@@ -2,67 +2,35 @@
 
 ## 0.1.0 (2024-05-22)
 
-
 ### Features
 
-* add asana utilities ([dac42c2](https://github.com/emberist/mrburns/commit/dac42c2181c95292edab860f1423a897d20585af))
-* add ci test and build ([dd57bc0](https://github.com/emberist/mrburns/commit/dd57bc038cf1d59b9be89c29f981de30418b6b7f))
-* add compatibilities table ([5b759f7](https://github.com/emberist/mrburns/commit/5b759f762ed8f55d8f8264830e5e3274b414738c))
-* add connectors logic ([542a290](https://github.com/emberist/mrburns/commit/542a29067d2d647b0159c9d3c243670dfc509158))
-* add docs ([fadd046](https://github.com/emberist/mrburns/commit/fadd0468cce253c64b9ed962e38d46b8cf7aae10))
-* add github connectors ([e68ad2b](https://github.com/emberist/mrburns/commit/e68ad2bd8badff1f629407a00358fa0a743607ca))
-* add new branch prefixes from config files ([34e8f1f](https://github.com/emberist/mrburns/commit/34e8f1f18ef590cb281b65dcbd41450f2384e087))
-* add release ci file ([845b0ea](https://github.com/emberist/mrburns/commit/845b0eac0686e1c9595d5d5f3026dcc290a537ca))
-* bump minor ([04defe6](https://github.com/emberist/mrburns/commit/04defe6966008bbb925612fe5f372d607253b8d4))
-* bump version ([2003017](https://github.com/emberist/mrburns/commit/20030170282111c3c74f5bb3f73df7d4a864b95d))
-* bump version ([799d08f](https://github.com/emberist/mrburns/commit/799d08f45d7af30eda8202cf73dde8d604a5ad42))
-* bump version ([0b7b3e6](https://github.com/emberist/mrburns/commit/0b7b3e6dd3a493640b4861d1d6b7b1359d27a909))
-* first commit ([e96615e](https://github.com/emberist/mrburns/commit/e96615e8e577421c4c2f011300db2e83137a003c))
-* first commit ([b579ef9](https://github.com/emberist/mrburns/commit/b579ef96fef073b559d1d5ca85cf1d36d5603f8e))
-* get default branch name from git ([bdf6518](https://github.com/emberist/mrburns/commit/bdf6518df7c74ac2be3b9d87a4f1b0af468c2083))
-* move jira module into separeted files ([366e2e4](https://github.com/emberist/mrburns/commit/366e2e4cd1010d2cbdd69c144c501f7478a87a66))
-* remove jira api url from config ([9c088fa](https://github.com/emberist/mrburns/commit/9c088fab9d804145f7a3a333454a0e56c59a4571))
-* use cargo.tml version ([e68eee9](https://github.com/emberist/mrburns/commit/e68eee95696bdf5c3d9b41ff53591343444255cc))
-* use connectors in main commands ([43c340e](https://github.com/emberist/mrburns/commit/43c340ef46075e8d1d47cc76f8eef5432c519308))
-* use native url query params parsing ([02d823e](https://github.com/emberist/mrburns/commit/02d823e77373a0d4a76d14366f3c8c91849849f6))
-
+- add asana utilities ([dac42c2](https://github.com/emberist/mrburns/commit/dac42c2181c95292edab860f1423a897d20585af))
+- add ci test and build ([dd57bc0](https://github.com/emberist/mrburns/commit/dd57bc038cf1d59b9be89c29f981de30418b6b7f))
+- add compatibilities table ([5b759f7](https://github.com/emberist/mrburns/commit/5b759f762ed8f55d8f8264830e5e3274b414738c))
+- add connectors logic ([542a290](https://github.com/emberist/mrburns/commit/542a29067d2d647b0159c9d3c243670dfc509158))
+- add docs ([fadd046](https://github.com/emberist/mrburns/commit/fadd0468cce253c64b9ed962e38d46b8cf7aae10))
+- add github connectors ([e68ad2b](https://github.com/emberist/mrburns/commit/e68ad2bd8badff1f629407a00358fa0a743607ca))
+- add new branch prefixes from config files ([34e8f1f](https://github.com/emberist/mrburns/commit/34e8f1f18ef590cb281b65dcbd41450f2384e087))
+- add release ci file ([845b0ea](https://github.com/emberist/mrburns/commit/845b0eac0686e1c9595d5d5f3026dcc290a537ca))
+- bump minor ([04defe6](https://github.com/emberist/mrburns/commit/04defe6966008bbb925612fe5f372d607253b8d4))
+- bump version ([2003017](https://github.com/emberist/mrburns/commit/20030170282111c3c74f5bb3f73df7d4a864b95d))
+- bump version ([799d08f](https://github.com/emberist/mrburns/commit/799d08f45d7af30eda8202cf73dde8d604a5ad42))
+- bump version ([0b7b3e6](https://github.com/emberist/mrburns/commit/0b7b3e6dd3a493640b4861d1d6b7b1359d27a909))
+- first commit ([e96615e](https://github.com/emberist/mrburns/commit/e96615e8e577421c4c2f011300db2e83137a003c))
+- first commit ([b579ef9](https://github.com/emberist/mrburns/commit/b579ef96fef073b559d1d5ca85cf1d36d5603f8e))
+- get default branch name from git ([bdf6518](https://github.com/emberist/mrburns/commit/bdf6518df7c74ac2be3b9d87a4f1b0af468c2083))
+- move jira module into separeted files ([366e2e4](https://github.com/emberist/mrburns/commit/366e2e4cd1010d2cbdd69c144c501f7478a87a66))
+- remove jira api url from config ([9c088fa](https://github.com/emberist/mrburns/commit/9c088fab9d804145f7a3a333454a0e56c59a4571))
+- use cargo.tml version ([e68eee9](https://github.com/emberist/mrburns/commit/e68eee95696bdf5c3d9b41ff53591343444255cc))
+- use connectors in main commands ([43c340e](https://github.com/emberist/mrburns/commit/43c340ef46075e8d1d47cc76f8eef5432c519308))
+- use native url query params parsing ([02d823e](https://github.com/emberist/mrburns/commit/02d823e77373a0d4a76d14366f3c8c91849849f6))
 
 ### Bug Fixes
 
-* create mr with target branch option ([f20feee](https://github.com/emberist/mrburns/commit/f20feee74b1233ad28f5c1b422de5101f49f0756))
-* github action folder ([492558b](https://github.com/emberist/mrburns/commit/492558b7d652046bed851a2698e50d5d62f0f994))
-* import after rebase ([2310818](https://github.com/emberist/mrburns/commit/2310818fe808af4817933ea7f73f9013ffa5f465))
-* remove jira api url from  config ([a8b6e29](https://github.com/emberist/mrburns/commit/a8b6e291e4a103e3291a5740f6fe83f1979493c6))
-* remove licence duplicate ([6bf1b99](https://github.com/emberist/mrburns/commit/6bf1b9996d45c5d35bcfa1d67c9b5fdbf201748d))
-* remove spinoff deps ([0247371](https://github.com/emberist/mrburns/commit/0247371c681a11e9ba9f357e340ba86ecf42b2c5))
-* replace underscores with dashes ([23caf68](https://github.com/emberist/mrburns/commit/23caf68d8875c769a63719de7ab9b8729aba92ef))
-
-## 0.4.0
-
-### Features
-
-- Add `branchPrefixes` config option
-
-## 0.3.4
-
-- Refactor folder structure
-
-## 0.3.3
-
-- Replace `_` with `-`
-
-## 0.3.2
-
-- Use native url to generate query params
-- Update dependencies
-
-## 0.2.0
-
-### Changes
-
-- Merge and pull request are not created anymore. Using specific links to start automate the creation
-- Changed the default base branch from `master` to `main`
-
-## 0.1.0
-
-Not so much to say, the first release of mrburns 🔥
+- create mr with target branch option ([f20feee](https://github.com/emberist/mrburns/commit/f20feee74b1233ad28f5c1b422de5101f49f0756))
+- github action folder ([492558b](https://github.com/emberist/mrburns/commit/492558b7d652046bed851a2698e50d5d62f0f994))
+- import after rebase ([2310818](https://github.com/emberist/mrburns/commit/2310818fe808af4817933ea7f73f9013ffa5f465))
+- remove jira api url from config ([a8b6e29](https://github.com/emberist/mrburns/commit/a8b6e291e4a103e3291a5740f6fe83f1979493c6))
+- remove licence duplicate ([6bf1b99](https://github.com/emberist/mrburns/commit/6bf1b9996d45c5d35bcfa1d67c9b5fdbf201748d))
+- remove spinoff deps ([0247371](https://github.com/emberist/mrburns/commit/0247371c681a11e9ba9f357e340ba86ecf42b2c5))
+- replace underscores with dashes ([23caf68](https://github.com/emberist/mrburns/commit/23caf68d8875c769a63719de7ab9b8729aba92ef))
