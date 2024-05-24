@@ -27,35 +27,59 @@ jobs:
     strategy:
       matrix:
         include:
-          - target: x86_64-pc-windows-gnu
-            archive: zip
+          - build: linux
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+
+          - build: macos
+            os: macos-latest
+            target: x86_64-apple-darwin
+
+          - build: windows-gnu
             os: windows-latest
-          - target: x86_64-unknown-linux-musl
-            archive: tar.gz tar.xz tar.zst
-            os: ubuntu-20.04
-          - target: x86_64-apple-darwin
-            os: macOS-latest
-            archive: zip
-          - target: aarch64-apple-darwin
-            os: macOS-latest
-            archive: zip
+            target: x86_64-pc-windows-gnu
+
     runs-on: ${{ matrix.os }}
     if: ${{ needs.release-please.outputs.release_created }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Compile and release
-        id: compile
-        uses: rust-build/rust-build.action@v1.4.5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          RUSTTARGET: ${{ matrix.target }}
-          ARCHIVE_TYPES: ${{ matrix.archive }}
+          targets: ${{ matrix.target }}
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --verbose --release --target ${{ matrix.target }}
+
+      - name: Build archive
+        shell: bash
+        run: |
+          binary_name="mrburns"
+
+          dirname="$binary_name-${{ needs.release-please.outputs.tag_name }}-${{ matrix.target }}"
+          mkdir "$dirname"
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mv "target/${{ matrix.target }}/release/$binary_name.exe" "$dirname"
+          else
+            mv "target/${{ matrix.target }}/release/$binary_name" "$dirname"
+          fi
+
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            7z a "$dirname.zip" "$dirname"
+            echo "ASSET=$dirname.zip" >> $GITHUB_ENV
+          else
+            tar -czf "$dirname.tar.gz" "$dirname"
+            echo "ASSET=$dirname.tar.gz" >> $GITHUB_ENV
+          fi
 
       - name: Upload Release Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{needs.release-please.outputs.tag_name}} ${{ steps.compile.outputs.BUILT_ARCHIVE }} ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+          gh release upload ${{needs.release-please.outputs.tag_name}} ${{ env.ASSET }}
