@@ -31,7 +31,7 @@ async fn main() {
     if let Some(latest_version) = maybe_latest_version {
         if VERSION != latest_version {
             log::warning(format!(
-                "A new version of mrburns is available: v{}",
+                "A new version of mrburns is available: v{}. Check it out at https://github.com/emberist/mrburns",
                 latest_version
             ))
             .unwrap();
