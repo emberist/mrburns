@@ -18,7 +18,7 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release-please
         with:
-          skip-github-pull-request: true
+          changelog-host:
           token: ${{ secrets.GH_TOKEN }}
           release-type: rust
   create-release:
