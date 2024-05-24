@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/emberist/mrburns/compare/v1.1.0...v1.1.1) (2024-05-24)
+
+
+### Bug Fixes
+
+* add new mrburns version url ([ef74f14](https://github.com/emberist/mrburns/commit/ef74f1464bc7e750beac920b7bea7eb889c6a5b1))
+
 ## [1.1.0](https://github.com/emberist/mrburns/compare/v1.0.0...v1.1.0) (2024-05-24)
 
 
