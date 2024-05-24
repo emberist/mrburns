@@ -3,6 +3,7 @@ use cli::{Cli, Commands};
 use cliclack::{intro, log, outro};
 use commands::{browse, mr, start, wizard::start_config_wizard};
 use std::process;
+use utils::get_latest_version;
 
 mod cli;
 mod commands;
@@ -21,6 +22,21 @@ async fn main() {
     let cli = Cli::parse();
 
     intro(format!("mrburns v{}", VERSION)).unwrap();
+
+    let maybe_latest_version = get_latest_version()
+        .await
+        .ok()
+        .map(|version| version.to_string());
+
+    if let Some(latest_version) = maybe_latest_version {
+        if VERSION != latest_version {
+            log::warning(format!(
+                "A new version of mrburns is available: v{}",
+                latest_version
+            ))
+            .unwrap();
+        }
+    }
 
     let result = match &cli.command {
         Commands::Start(args) => start::start_task(args).await,
