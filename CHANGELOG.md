@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/emberist/mrburns/compare/v1.0.0...v1.1.0) (2024-05-24)
+
+
+### Features
+
+* add check for new versions ([f1fcfa7](https://github.com/emberist/mrburns/commit/f1fcfa73d4b6a1247ee42a6f42e01f584826fa0c))
+
 ## [1.0.0](https://github.com/emberist/mrburns/compare/v0.1.0...v1.0.0) (2024-05-24)
 
 
