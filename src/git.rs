@@ -1,5 +1,7 @@
 use std::process::{Command, Stdio};
 
+use anyhow::bail;
+
 pub struct GitConfig {}
 
 impl GitConfig {
@@ -10,6 +12,10 @@ impl GitConfig {
             .output()?;
 
         let key = String::from_utf8(git_remote_output.stdout)?.replace('\n', "");
+
+        if key.is_empty() {
+            bail!("Config key with no content {}", key);
+        }
 
         Ok(key)
     }
@@ -71,5 +77,19 @@ impl GitBranch {
         let branch_name = String::from_utf8(output.stdout)?.replace('\n', "");
 
         Ok(branch_name)
+    }
+
+    pub fn all() -> anyhow::Result<Vec<String>> {
+        let output = Command::new("git")
+            .args(["branch", "--list"])
+            .stdout(Stdio::piped())
+            .output()?;
+
+        let branches = String::from_utf8(output.stdout)?
+            .split('\n')
+            .map(|s| s.trim().replace("* ", "").to_string())
+            .collect();
+
+        Ok(branches)
     }
 }
