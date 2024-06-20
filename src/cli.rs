@@ -43,6 +43,8 @@ pub enum Commands {
     Browse,
     #[command(about = "Helps opening a MR for the current branch")]
     Mr(MrArgs),
+    #[command(about = "List your mrburns active branches")]
+    List,
     #[command(about = "Set mrburns configuration")]
     Config(ConfigArgs),
 }

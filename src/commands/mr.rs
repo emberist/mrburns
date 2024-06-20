@@ -7,20 +7,20 @@ use cliclack::{
 
 use crate::{
     cli::MrArgs,
-    git::{GitBranch, GitConfig},
+    git::{Git, GitConfig},
     repo_connectors::models::RepoConnector,
     task_connectors::task_connector::TaskConnector,
 };
 
 pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
-    let current_branch_name = GitBranch::current()?;
+    let current_branch_name = Git::current_branch()?;
 
     let task_connector = TaskConnector::from_task_url()?;
 
     let target_branch = params
         .base_branch
         .to_owned()
-        .unwrap_or(GitBranch::default()?);
+        .unwrap_or(Git::default_branch()?);
 
     let confirmed = confirm(format!(
         "Creating MR: {} <- {}",

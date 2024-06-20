@@ -1,7 +1,7 @@
 use clap::Parser;
 use cli::{Cli, Commands};
 use cliclack::{intro, log, outro};
-use commands::{browse, mr, start, wizard::start_config_wizard};
+use commands::{branches, browse, mr, start, wizard::start_config_wizard};
 use std::process;
 use utils::get_latest_version;
 
@@ -42,6 +42,7 @@ async fn main() {
         Commands::Start(args) => start::start_task(args).await,
         Commands::Mr(args) => mr::create_mr(args).await,
         Commands::Browse => browse::browse(),
+        Commands::List => branches::branches(),
         Commands::Config(args) => start_config_wizard(args),
     };
 

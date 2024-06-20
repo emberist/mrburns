@@ -1,6 +1,6 @@
 use url::Url;
 
-use crate::{git::GitBranch, task_connectors::models::TaskDetails, utils::get_current_task_url};
+use crate::{git::Git, task_connectors::models::TaskDetails, utils::get_current_task_url};
 
 pub struct GithubRepo {}
 
@@ -10,7 +10,7 @@ impl GithubRepo {
         task_info: &TaskDetails,
         target_branch: &str,
     ) -> anyhow::Result<String> {
-        let current_branch = GitBranch::current()?;
+        let current_branch = Git::current_branch()?;
 
         let task_url = get_current_task_url()?;
 
