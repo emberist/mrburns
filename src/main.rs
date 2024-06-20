@@ -42,7 +42,7 @@ async fn main() {
         Commands::Start(args) => start::start_task(args).await,
         Commands::Mr(args) => mr::create_mr(args).await,
         Commands::Browse => browse::browse(),
-        Commands::Branches => branches::branches(),
+        Commands::List => branches::branches(),
         Commands::Config(args) => start_config_wizard(args),
     };
 

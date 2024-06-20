@@ -1,8 +1,7 @@
 use url::Url;
 
 use crate::{
-    config::Config, git::GitBranch, task_connectors::models::TaskDetails,
-    utils::get_current_task_url,
+    config::Config, git::Git, task_connectors::models::TaskDetails, utils::get_current_task_url,
 };
 
 pub struct GitlabRepo {}
@@ -13,7 +12,7 @@ impl GitlabRepo {
         task_info: &TaskDetails,
         target_branch: &str,
     ) -> anyhow::Result<String> {
-        let current_branch_name = GitBranch::current()?;
+        let current_branch_name = Git::current_branch()?;
 
         let task_url = get_current_task_url()?;
 

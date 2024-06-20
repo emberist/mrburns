@@ -2,6 +2,94 @@ use std::process::{Command, Stdio};
 
 use anyhow::bail;
 
+pub struct Git {}
+
+impl Git {
+    pub fn is_clean() -> anyhow::Result<bool> {
+        let output = Command::new("git")
+            .args(["status", "--porcelain"])
+            .stdout(Stdio::piped())
+            .output()?;
+
+        let files: Vec<String> = String::from_utf8(output.stdout)?
+            .split('\n')
+            .filter_map(|s| {
+                let value = s.trim().to_string();
+
+                if value.is_empty() {
+                    return None;
+                }
+
+                Some(value)
+            })
+            .collect();
+
+        Ok(files.len() == 0)
+    }
+
+    pub fn switch(name: &str, create_branch: bool) -> anyhow::Result<()> {
+        let args = if create_branch {
+            vec!["switch", "-c", name]
+        } else {
+            vec!["switch", name]
+        };
+
+        let output: std::process::Output = Command::new("git")
+            .args(args)
+            .stdout(Stdio::piped())
+            .output()?;
+
+        let error = String::from_utf8(output.stderr)?;
+
+        if error.contains("fatal") {
+            anyhow::bail!("An error occurred creating branch");
+        }
+
+        Ok(())
+    }
+
+    pub fn default_branch() -> anyhow::Result<String> {
+        let output = Command::new("git")
+            .args(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"])
+            .stdout(Stdio::piped())
+            .output()?;
+
+        let branch_name = String::from_utf8(output.stdout)?
+            .replace('\n', "")
+            .split('/')
+            .last()
+            .ok_or_else(|| anyhow::anyhow!("Cannot get default branch name"))?
+            .to_string();
+
+        Ok(branch_name)
+    }
+
+    pub fn current_branch() -> anyhow::Result<String> {
+        let output = Command::new("git")
+            .args(["branch", "--show-current"])
+            .stdout(Stdio::piped())
+            .output()?;
+
+        let branch_name = String::from_utf8(output.stdout)?.replace('\n', "");
+
+        Ok(branch_name)
+    }
+
+    pub fn all_branches() -> anyhow::Result<Vec<String>> {
+        let output = Command::new("git")
+            .args(["branch", "--list"])
+            .stdout(Stdio::piped())
+            .output()?;
+
+        let branches = String::from_utf8(output.stdout)?
+            .split('\n')
+            .map(|s| s.trim().replace("* ", "").to_string())
+            .collect();
+
+        Ok(branches)
+    }
+}
+
 pub struct GitConfig {}
 
 impl GitConfig {
@@ -31,65 +119,5 @@ impl GitConfig {
         }
 
         Ok(())
-    }
-}
-
-pub struct GitBranch {}
-
-impl GitBranch {
-    pub fn create(name: &str) -> anyhow::Result<()> {
-        let output: std::process::Output = Command::new("git")
-            .args(["switch", "-c", name])
-            .stdout(Stdio::piped())
-            .output()?;
-
-        let error = String::from_utf8(output.stderr)?;
-
-        if error.contains("fatal") {
-            anyhow::bail!("An error occurred creating branch {}", name);
-        }
-
-        Ok(())
-    }
-
-    pub fn default() -> anyhow::Result<String> {
-        let output = Command::new("git")
-            .args(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"])
-            .stdout(Stdio::piped())
-            .output()?;
-
-        let branch_name = String::from_utf8(output.stdout)?
-            .replace('\n', "")
-            .split('/')
-            .last()
-            .ok_or_else(|| anyhow::anyhow!("Cannot get default branch name"))?
-            .to_string();
-
-        Ok(branch_name)
-    }
-
-    pub fn current() -> anyhow::Result<String> {
-        let output = Command::new("git")
-            .args(["branch", "--show-current"])
-            .stdout(Stdio::piped())
-            .output()?;
-
-        let branch_name = String::from_utf8(output.stdout)?.replace('\n', "");
-
-        Ok(branch_name)
-    }
-
-    pub fn all() -> anyhow::Result<Vec<String>> {
-        let output = Command::new("git")
-            .args(["branch", "--list"])
-            .stdout(Stdio::piped())
-            .output()?;
-
-        let branches = String::from_utf8(output.stdout)?
-            .split('\n')
-            .map(|s| s.trim().replace("* ", "").to_string())
-            .collect();
-
-        Ok(branches)
     }
 }
