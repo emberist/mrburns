@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/emberist/mrburns/compare/v1.1.1...v1.2.0) (2024-06-20)
+
+
+### Features
+
+* add list command ([ece9d6e](https://github.com/emberist/mrburns/commit/ece9d6ef0ccb90a4493af4ff67a1badeba885fc4))
+* add new branches command ([6484d55](https://github.com/emberist/mrburns/commit/6484d552d71589c0c803b99c6239c86f8a725056))
+
 ## [1.1.1](https://github.com/emberist/mrburns/compare/v1.1.0...v1.1.1) (2024-05-24)
 
 
