@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/emberist/mrburns/compare/v1.3.1...v1.4.0) (2024-06-26)
+
+
+### Features
+
+* add description default template ([5439cbf](https://github.com/emberist/mrburns/commit/5439cbf11c3bf1ed5b944052f6c6e1a22972b0de))
+
 ## [1.3.1](https://github.com/emberist/mrburns/compare/v1.3.0...v1.3.1) (2024-06-26)
 
 
