@@ -7,20 +7,22 @@ use cliclack::{
 
 use crate::{
     cli::MrArgs,
-    git::{Git, GitConfig},
+    git::{adapter::GitClientAdapter, client::GitClient},
     repo_connectors::models::RepoConnector,
     task_connectors::task_connector::TaskConnector,
 };
 
 pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
-    let current_branch_name = Git::current_branch()?;
+    let git = GitClient {};
 
-    let task_connector = TaskConnector::from_task_url()?;
+    let current_branch_name = git.current_branch()?;
+
+    let task_connector = TaskConnector::from_task_url(&git)?;
 
     let target_branch = params
         .base_branch
         .to_owned()
-        .unwrap_or(Git::default_branch()?);
+        .unwrap_or(git.default_branch()?);
 
     let confirmed = confirm(format!(
         "Creating MR: {} <- {}",
@@ -40,7 +42,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     mr_spinner.stop(format!("Task {} found.", task_info.name));
 
-    let git_remote_url = GitConfig::read("remote.origin.url")?;
+    let git_remote_url = git.read_config("remote.origin.url")?;
 
     let repo_connector =
         RepoConnector::from_remote(&git_remote_url).context("Cannot parse repo url")?;

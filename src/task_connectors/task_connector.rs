@@ -1,7 +1,10 @@
 use crate::{
-    task_connectors::asana::utils::get_asana_task_id_from_url,
-    task_connectors::github::utils::get_github_issue_info_from_url,
-    task_connectors::jira::utils::get_jira_task_info_from_url, utils::get_current_task_url,
+    git::adapter::GitClientAdapter,
+    task_connectors::{
+        asana::utils::get_asana_task_id_from_url, github::utils::get_github_issue_info_from_url,
+        jira::utils::get_jira_task_info_from_url,
+    },
+    utils::get_current_task_url,
 };
 
 use super::{
@@ -31,8 +34,8 @@ pub enum TaskConnector {
 }
 
 impl TaskConnector {
-    pub fn from_task_url() -> anyhow::Result<Self> {
-        let task_url = get_current_task_url()?;
+    pub fn from_task_url(git: &impl GitClientAdapter) -> anyhow::Result<Self> {
+        let task_url = get_current_task_url(git)?;
 
         Self::from_url(&task_url)
     }

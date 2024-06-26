@@ -2,10 +2,12 @@ use anyhow::Context;
 use cliclack::log;
 use url::Url;
 
-use crate::utils::get_current_task_url;
+use crate::{git::client::GitClient, utils::get_current_task_url};
 
 pub fn browse() -> anyhow::Result<()> {
-    let task_url = get_current_task_url()?;
+    let git_client = GitClient {};
+
+    let task_url = get_current_task_url(&git_client)?;
 
     Url::parse(&task_url).context("No task URL found. Start a task with 'mrburns start-task <url>' before running this command")?;
 
