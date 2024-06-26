@@ -72,17 +72,16 @@ mod tests {
 
     use anyhow::Result;
 
-    use crate::{
-        git::mock::GitClientMock, repo_connectors::models::RepoConnector,
-        task_connectors::models::ConnectorType, utils::get_default_mr_description_template,
-    };
+    use crate::{git::mock::GitClientMock, task_connectors::models::ConnectorType};
 
     use super::*;
 
     #[test]
     fn creates_gitlab_mr_url() -> Result<()> {
+        let config = Config::default();
+
         let mr_url = GitlabRepo::create_mr_url(
-            &Config::default(),
+            &config,
             &GitClientMock {},
             "owner/repo",
             &TaskDetails {
@@ -91,7 +90,7 @@ mod tests {
                 name: "Hello World".to_string(),
             },
             "master",
-            &get_default_mr_description_template(&RepoConnector::Gitlab("".to_string())),
+            &config.mr.description_template.join("\n"),
         )
         .unwrap();
 
@@ -108,7 +107,7 @@ mod tests {
             ("merge_request[target_branch]", "master"),
             (
                 "merge_request[description]",
-                "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n\n/assign me",
+                "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n{task_actions}",
             ),
             ("merge_request[draft]", "false"),
             ("merge_request[squash_on_merge]", "true"),

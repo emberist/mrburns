@@ -76,6 +76,7 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
             default_draft,
             title_template,
             description_template_path,
+            description_template: default_config.mr.description_template,
         },
         branch_prefixes: BranchPrefixes {
             bugfix,

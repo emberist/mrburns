@@ -93,6 +93,14 @@ This commands open for you a prefilled marge reuest page
 mrburns mr
 ```
 
+### List
+
+Helpful when you need to quickly switch between active mrburns's branches;
+
+```bash
+mrburns list
+```
+
 ### Browse
 
 Helpful when you need to quickly open you task from the codebase current branch!
@@ -109,14 +117,26 @@ This command helps you creating a `mrburns.config.json` file
 mrburns config
 ```
 
-The config file is something like this
+The default config file is something like this
 
 ```json
 {
-  "create_draft_mr": true,
-  ...
+  "mr": {
+    "defaultDraft": false,
+    "titleTemplate": "{task_id}/{task_type}/{task_title}",
+    "descriptionTemplate": [],
+    "descriptionTemplatePath": "./templates/default.md"
+  },
+  "branchPrefixes": {
+    "feature": "feat",
+    "release": "release",
+    "bugfix": "bugfix",
+    "chore": "chore"
+  }
 }
 ```
+
+if the `descriptionTemplatePath` file exists, it will override the `descriptionTemplate` option
 
 ## 🧑‍💻 Develop
 

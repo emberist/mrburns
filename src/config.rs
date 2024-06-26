@@ -2,7 +2,8 @@ use serde::{Deserialize, Serialize};
 use std::{fs::OpenOptions, path::Path};
 
 use crate::constants::{
-    CONFIG_FILE_NAME, DEFAULT_MR_TEMPLATE_PATH, TASK_ID_REF, TASK_TITLE_REF, TASK_TYPE_REF,
+    CONFIG_FILE_NAME, DEFAULT_MR_TEMPLATE_PATH, TASK_ACTIONS_REF, TASK_ID_REF, TASK_TITLE_REF,
+    TASK_TYPE_REF, TASK_URL_REF,
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -23,6 +24,8 @@ pub struct MrConfig {
     pub title_template: String,
     #[serde(default)]
     pub description_template_path: String,
+    #[serde(default)]
+    pub description_template: Vec<String>,
 }
 
 impl Default for MrConfig {
@@ -31,6 +34,13 @@ impl Default for MrConfig {
             default_draft: false,
             title_template: format!("{}/{}/{}", TASK_ID_REF, TASK_TYPE_REF, TASK_TITLE_REF),
             description_template_path: DEFAULT_MR_TEMPLATE_PATH.to_string(),
+            description_template: vec![
+                "### Changes".to_string(),
+                format!("- [x] [{}]({})", TASK_TITLE_REF, TASK_URL_REF),
+                "".to_string(),
+                "---".to_string(),
+                TASK_ACTIONS_REF.to_string(),
+            ],
         }
     }
 }

@@ -65,17 +65,15 @@ mod tests {
 
     use anyhow::Result;
 
-    use crate::{
-        git::mock::GitClientMock, repo_connectors::models::RepoConnector,
-        task_connectors::models::ConnectorType, utils::get_default_mr_description_template,
-    };
+    use crate::{git::mock::GitClientMock, task_connectors::models::ConnectorType};
 
     use super::*;
 
     #[test]
     fn creates_github_mr_url() -> Result<()> {
+        let config = Config::default();
         let mr_url = GithubRepo::create_mr_url(
-            &Config::default(),
+            &config,
             &GitClientMock {},
             "owner/repo",
             &TaskDetails {
@@ -84,7 +82,7 @@ mod tests {
                 name: "Hello World".to_string(),
             },
             "master",
-            &get_default_mr_description_template(&RepoConnector::Github("".to_string())),
+            &config.mr.description_template.join("\n"),
         )
         .unwrap();
 
@@ -101,7 +99,7 @@ mod tests {
         let expected_params = [
             ("expand", "1"),
             ("title", "123/feat/Hello World"),
-            ("body", "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n\nCloses #123")
+            ("body", "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n{task_actions}")
         ];
 
         zip(params, expected_params).for_each(
