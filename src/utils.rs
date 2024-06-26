@@ -5,11 +5,7 @@ use reqwest::Client;
 use semver::Version;
 use serde::{de, Deserialize};
 
-use crate::{
-    constants::{TASK_ID_REF, TASK_TITLE_REF, TASK_URL_REF},
-    git::adapter::GitClientAdapter,
-    repo_connectors::models::RepoConnector,
-};
+use crate::git::adapter::GitClientAdapter;
 
 pub fn get_task_url_config_key(branch_name: &str) -> String {
     format!("branch.{}.task-url", branch_name)
@@ -21,23 +17,6 @@ pub fn get_current_task_url(git: &impl GitClientAdapter) -> anyhow::Result<Strin
     let task_url_config_key = get_task_url_config_key(&current_branch_name);
 
     git.read_config(&task_url_config_key)
-}
-
-pub fn get_default_mr_description_template(connector: &RepoConnector) -> String {
-    match connector {
-        RepoConnector::Bitbucket(_) => format!(
-            "### Changes\n- [x] {}\n\n---\n\n{}\n\n",
-            TASK_TITLE_REF, TASK_URL_REF
-        ),
-        RepoConnector::Github(_) => format!(
-            "### Changes\n- [x] [{}]({})\n\n---\n\nCloses #{}",
-            TASK_TITLE_REF, TASK_URL_REF, TASK_ID_REF
-        ),
-        RepoConnector::Gitlab(_) => format!(
-            "### Changes\n- [x] [{}]({})\n\n---\n\n/assign me",
-            TASK_TITLE_REF, TASK_URL_REF
-        ),
-    }
 }
 
 async fn fetch_versions() -> Result<Vec<Version>> {

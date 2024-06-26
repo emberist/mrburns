@@ -5,9 +5,10 @@ use anyhow::Context;
 use regex::Regex;
 
 use crate::config::Config;
+use crate::constants::TASK_ACTIONS_REF;
+use crate::constants::TASK_ID_REF;
 use crate::git::client::GitClient;
 use crate::task_connectors::models::TaskDetails;
-use crate::utils::get_default_mr_description_template;
 
 use super::github::GithubRepo;
 use super::gitlab::GitlabRepo;
@@ -50,7 +51,17 @@ impl RepoConnector {
 
         let config = Config::read();
 
-        let default_description_template = get_default_mr_description_template(&self);
+        let actions = match self {
+            RepoConnector::Github(_) => format!("closes #{}", TASK_ID_REF),
+            RepoConnector::Gitlab(_) => "/assign me".to_string(),
+            RepoConnector::Bitbucket(_) => String::new(),
+        };
+
+        let default_description_template = config
+            .mr
+            .description_template
+            .join("\n")
+            .replace(TASK_ACTIONS_REF, &actions);
 
         let description_template = if Path::new(&config.mr.description_template_path).exists() {
             std::fs::read_to_string(&config.mr.description_template_path)

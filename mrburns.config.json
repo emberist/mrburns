@@ -2,7 +2,14 @@
   "mr": {
     "defaultDraft": false,
     "titleTemplate": "[{task_type}] {task_title}",
-    "descriptionTemplatePath": "./templates/default.md"
+    "descriptionTemplatePath": "./templates/default.md",
+    "descriptionTemplate": [
+      "### Changes",
+      "- [x] [{task_title}]({task_url})",
+      "",
+      "---",
+      "{task_actions}"
+    ]
   },
   "branchPrefixes": {
     "feature": "feat",
