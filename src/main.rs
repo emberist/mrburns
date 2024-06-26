@@ -1,8 +1,8 @@
 use clap::Parser;
 use cli::{Cli, Commands};
-use cliclack::{intro, log, outro};
+use cliclack::{confirm, intro, log, outro};
 use commands::{branches, browse, mr, start, wizard::start_config_wizard};
-use std::process;
+use std::process::{self, Command, Stdio};
 use utils::get_latest_version;
 
 mod cli;
@@ -31,10 +31,25 @@ async fn main() {
     if let Some(latest_version) = maybe_latest_version {
         if VERSION != latest_version {
             log::warning(format!(
-                "A new version of mrburns is available: v{}. Check it out at https://github.com/emberist/mrburns",
+                "A new version of mrburns is available: v{}. Run `cargo install mrburns --git https://github.com/emberist/mrburns` to update.",
                 latest_version
             ))
             .unwrap();
+
+            let should_update = confirm("Do you want to install it?").interact().unwrap();
+
+            if should_update {
+                Command::new("cargo")
+                    .args([
+                        "install",
+                        "mrburns",
+                        "--git",
+                        "https://github.com/emberist/mrburns",
+                    ])
+                    .stdout(Stdio::piped())
+                    .spawn()
+                    .expect("Something went wrong while trying to install mrburns");
+            }
         }
     }
 
