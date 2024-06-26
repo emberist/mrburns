@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/emberist/mrburns/compare/v1.3.0...v1.3.1) (2024-06-26)
+
+
+### Bug Fixes
+
+* wait to update to complete ([815cede](https://github.com/emberist/mrburns/commit/815cede9c9de1902716f18c79538c514c16fc1e7))
+
 ## [1.3.0](https://github.com/emberist/mrburns/compare/v1.2.0...v1.3.0) (2024-06-26)
 
 
