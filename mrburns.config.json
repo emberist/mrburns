@@ -1,7 +1,7 @@
 {
   "mr": {
     "defaultDraft": false,
-    "titleTemplate": "{task_id}/{task_type}/{task_title}",
+    "titleTemplate": "[{task_type}] {task_title}",
     "descriptionTemplatePath": "./templates/default.md"
   },
   "branchPrefixes": {
