@@ -39,7 +39,7 @@ async fn main() {
             let should_update = confirm("Do you want to install it?").interact().unwrap();
 
             if should_update {
-                Command::new("cargo")
+                let mut child = Command::new("cargo")
                     .args([
                         "install",
                         "mrburns",
@@ -49,6 +49,8 @@ async fn main() {
                     .stdout(Stdio::piped())
                     .spawn()
                     .expect("Something went wrong while trying to install mrburns");
+
+                child.wait().expect("Failed to wait on child process");
             }
         }
     }
