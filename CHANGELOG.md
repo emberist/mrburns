@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/emberist/mrburns/compare/v1.2.0...v1.3.0) (2024-06-26)
+
+
+### Features
+
+* add auto update command ([5c9f2db](https://github.com/emberist/mrburns/commit/5c9f2db27a9dc191c622e659e4adab9914f37f59))
+* add custom mrburns config ([581bdf3](https://github.com/emberist/mrburns/commit/581bdf34a37892dfa561c4c2d7a0c9b01829220a))
+* add mr title and description configs ([5e1ce9d](https://github.com/emberist/mrburns/commit/5e1ce9dab437a5a38aee506ae10102bc567af3f3))
+* add mrburns config file ([1f4fc94](https://github.com/emberist/mrburns/commit/1f4fc94b61c28f21eeea8c08613b7847819ae91b))
+
+
+### Bug Fixes
+
+* default description template ([025894b](https://github.com/emberist/mrburns/commit/025894bd94d55312cb1239c755b9aab597759324))
+
 ## [1.2.0](https://github.com/emberist/mrburns/compare/v1.1.1...v1.2.0) (2024-06-20)
 
 
