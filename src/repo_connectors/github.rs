@@ -101,7 +101,7 @@ mod tests {
         let expected_params = [
             ("expand", "1"),
             ("title", "123/feat/Hello World"),
-            ("body", "### Changes\n- [x] Hello World\n\n---\n\nhttps://github.com/some-cool-repo/issues/0\n\nCloses #123")
+            ("body", "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n\nCloses #123")
         ];
 
         zip(params, expected_params).for_each(

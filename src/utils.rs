@@ -30,11 +30,11 @@ pub fn get_default_mr_description_template(connector: &RepoConnector) -> String 
             TASK_TITLE_REF, TASK_URL_REF
         ),
         RepoConnector::Github(_) => format!(
-            "### Changes\n- [x] {}\n\n---\n\n{}\n\nCloses #{}",
+            "### Changes\n- [x] [{}]({})\n\n---\n\nCloses #{}",
             TASK_TITLE_REF, TASK_URL_REF, TASK_ID_REF
         ),
         RepoConnector::Gitlab(_) => format!(
-            "### Changes\n- [x] {}\n\n---\n\n{}\n\n/assign me",
+            "### Changes\n- [x] [{}]({})\n\n---\n\n/assign me",
             TASK_TITLE_REF, TASK_URL_REF
         ),
     }

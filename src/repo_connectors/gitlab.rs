@@ -108,7 +108,7 @@ mod tests {
             ("merge_request[target_branch]", "master"),
             (
                 "merge_request[description]",
-                "### Changes\n- [x] Hello World\n\n---\n\nhttps://github.com/some-cool-repo/issues/0\n\n/assign me",
+                "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n\n/assign me",
             ),
             ("merge_request[draft]", "false"),
             ("merge_request[squash_on_merge]", "true"),
