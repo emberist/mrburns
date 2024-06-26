@@ -2,10 +2,12 @@ use std::process::{Command, Stdio};
 
 use anyhow::bail;
 
-pub struct Git {}
+use super::adapter::GitClientAdapter;
 
-impl Git {
-    pub fn is_clean() -> anyhow::Result<bool> {
+pub struct GitClient {}
+
+impl GitClientAdapter for GitClient {
+    fn is_clean(&self) -> anyhow::Result<bool> {
         let output = Command::new("git")
             .args(["status", "--porcelain"])
             .stdout(Stdio::piped())
@@ -27,7 +29,7 @@ impl Git {
         Ok(files.len() == 0)
     }
 
-    pub fn switch(name: &str, create_branch: bool) -> anyhow::Result<()> {
+    fn switch(&self, name: &str, create_branch: bool) -> anyhow::Result<()> {
         let args = if create_branch {
             vec!["switch", "-c", name]
         } else {
@@ -48,7 +50,7 @@ impl Git {
         Ok(())
     }
 
-    pub fn default_branch() -> anyhow::Result<String> {
+    fn default_branch(&self) -> anyhow::Result<String> {
         let output = Command::new("git")
             .args(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"])
             .stdout(Stdio::piped())
@@ -64,7 +66,7 @@ impl Git {
         Ok(branch_name)
     }
 
-    pub fn current_branch() -> anyhow::Result<String> {
+    fn current_branch(&self) -> anyhow::Result<String> {
         let output = Command::new("git")
             .args(["branch", "--show-current"])
             .stdout(Stdio::piped())
@@ -75,7 +77,7 @@ impl Git {
         Ok(branch_name)
     }
 
-    pub fn all_branches() -> anyhow::Result<Vec<String>> {
+    fn all_branches(&self) -> anyhow::Result<Vec<String>> {
         let output = Command::new("git")
             .args(["branch", "--list"])
             .stdout(Stdio::piped())
@@ -88,12 +90,8 @@ impl Git {
 
         Ok(branches)
     }
-}
 
-pub struct GitConfig {}
-
-impl GitConfig {
-    pub fn read(key: &str) -> anyhow::Result<String> {
+    fn read_config(&self, key: &str) -> anyhow::Result<String> {
         let git_remote_output = Command::new("git")
             .args(["config", "--get", key])
             .stdout(Stdio::piped())
@@ -108,7 +106,7 @@ impl GitConfig {
         Ok(key)
     }
 
-    pub fn write(key: &str, value: &str) -> anyhow::Result<()> {
+    fn write_config(&self, key: &str, value: &str) -> anyhow::Result<()> {
         let cmd = Command::new("git")
             .args(["config", key, value])
             .stdout(Stdio::piped())

@@ -5,7 +5,8 @@ use cliclack::{
 
 use crate::{
     cli::ConfigArgs,
-    config::{BranchPrefixes, Config},
+    config::{BranchPrefixes, Config, MrConfig},
+    constants::DEFAULT_MR_TEMPLATE_PATH,
 };
 
 pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
@@ -16,7 +17,7 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
 
         log::success(format!(
             "Here your config: {}",
-            serde_json::to_string_pretty(&config.to_json())?
+            serde_json::to_string_pretty(&config)?
         ))?;
 
         return Ok(());
@@ -40,10 +41,19 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
         }
     }
 
-    let create_draft_mr =
+    let default_draft =
         confirm("Do you want the merge request created to be draft as default?").interact()?;
 
     let default_config = Config::default();
+
+    let title_template = input("Which title template would you like to use?")
+        .default_input(&default_config.mr.title_template)
+        .interact()?;
+
+    let description_template_path =
+        input("Which description template would you like to use? (Leave empty to skip)")
+            .default_input(DEFAULT_MR_TEMPLATE_PATH)
+            .interact()?;
 
     let feature = input("Which feature branch prefix would you like to use?")
         .default_input(&default_config.branch_prefixes.feature)
@@ -62,7 +72,11 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
         .interact()?;
 
     Config::write(Config {
-        create_draft_mr,
+        mr: MrConfig {
+            default_draft,
+            title_template,
+            description_template_path,
+        },
         branch_prefixes: BranchPrefixes {
             bugfix,
             chore,

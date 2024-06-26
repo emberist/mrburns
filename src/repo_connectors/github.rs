@@ -1,40 +1,116 @@
 use url::Url;
 
-use crate::{git::Git, task_connectors::models::TaskDetails, utils::get_current_task_url};
+use crate::{
+    config::Config,
+    constants::{TASK_ID_REF, TASK_TITLE_REF, TASK_TYPE_REF, TASK_URL_REF},
+    git::adapter::GitClientAdapter,
+    task_connectors::models::TaskDetails,
+    utils::get_current_task_url,
+};
 
 pub struct GithubRepo {}
 
 impl GithubRepo {
     pub fn create_mr_url(
+        config: &Config,
+        git_client: &impl GitClientAdapter,
         project_id: &str,
         task_info: &TaskDetails,
         target_branch: &str,
+        description_template: &str,
     ) -> anyhow::Result<String> {
-        let current_branch = Git::current_branch()?;
+        let current_branch = git_client.current_branch()?;
 
-        let task_url = get_current_task_url()?;
+        let task_url = get_current_task_url(git_client)?;
 
         let github_base_url = format!(
             "https://github.com/{}/compare/{}...{}",
             project_id, target_branch, current_branch
         );
 
+        let task_type = current_branch
+            .split("/")
+            .next()
+            .unwrap_or(&config.branch_prefixes.feature);
+
+        let mr_title = config
+            .mr
+            .title_template
+            .replace(TASK_ID_REF, &task_info.id)
+            .replace(TASK_TYPE_REF, &task_type)
+            .replace(TASK_TITLE_REF, &task_info.name);
+
+        let mr_description = description_template
+            .replace(TASK_ID_REF, &task_info.id)
+            .replace(TASK_TYPE_REF, &task_type)
+            .replace(TASK_TITLE_REF, &task_info.name)
+            .replace(TASK_URL_REF, &task_url);
+
         let url = Url::parse_with_params(
             &github_base_url,
             [
                 ("expand", "1"),
-                ("title", &task_info.name),
-                (
-                    "body",
-                    format!(
-                        "### Changes\n- [x] {}\n\n---\n\n{}",
-                        task_info.name, task_url
-                    )
-                    .as_str(),
-                ),
+                ("title", &mr_title),
+                ("body", mr_description.as_str()),
             ],
         )?;
 
         Ok(url.to_string())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::iter::zip;
+
+    use anyhow::Result;
+
+    use crate::{
+        git::mock::GitClientMock, repo_connectors::models::RepoConnector,
+        task_connectors::models::ConnectorType, utils::get_default_mr_description_template,
+    };
+
+    use super::*;
+
+    #[test]
+    fn creates_github_mr_url() -> Result<()> {
+        let mr_url = GithubRepo::create_mr_url(
+            &Config::default(),
+            &GitClientMock {},
+            "owner/repo",
+            &TaskDetails {
+                connector: ConnectorType::Github,
+                id: "123".to_string(),
+                name: "Hello World".to_string(),
+            },
+            "master",
+            &get_default_mr_description_template(&RepoConnector::Github("".to_string())),
+        )
+        .unwrap();
+
+        let url = Url::parse(&mr_url)?;
+
+        assert_eq!(url.domain(), Some("github.com"));
+        assert_eq!(
+            url.path(),
+            "/owner/repo/compare/master...feat/some-cool-feature"
+        );
+
+        let params = url.query_pairs().collect::<Vec<_>>();
+
+        let expected_params = [
+            ("expand", "1"),
+            ("title", "123/feat/Hello World"),
+            ("body", "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n\nCloses #123")
+        ];
+
+        zip(params, expected_params).for_each(
+            |((title, value), (expected_title, expected_value))| {
+                assert_eq!(title, expected_title);
+                assert_eq!(value, expected_value);
+            },
+        );
+
+        Ok(())
     }
 }

@@ -1,0 +1,13 @@
+{
+  "mr": {
+    "defaultDraft": false,
+    "titleTemplate": "[{task_type}] {task_title}",
+    "descriptionTemplatePath": "./templates/default.md"
+  },
+  "branchPrefixes": {
+    "feature": "feat",
+    "release": "release",
+    "bugfix": "bugfix",
+    "chore": "chore"
+  }
+}

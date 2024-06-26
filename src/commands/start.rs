@@ -5,7 +5,7 @@ use cliclack::{
 
 use crate::{
     cli::StartArgs,
-    git::{Git, GitConfig},
+    git::{adapter::GitClientAdapter, client::GitClient},
     task_connectors::task_connector::TaskConnector,
     utils::get_task_url_config_key,
 };
@@ -28,11 +28,13 @@ pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
     if params.dry {
         log::info(format!("Simulate creating branch {}.", branch_name))?;
     } else {
+        let git_client = GitClient {};
+
         let config_key = get_task_url_config_key(&branch_name);
 
-        GitConfig::write(&config_key, params.link.as_str())?;
+        git_client.write_config(&config_key, params.link.as_str())?;
 
-        Git::switch(&branch_name, true)?;
+        git_client.switch(&branch_name, true)?;
 
         log::info(format!("Branch {} created!", branch_name))?;
     }

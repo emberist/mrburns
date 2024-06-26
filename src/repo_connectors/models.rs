@@ -1,8 +1,13 @@
+use std::path::Path;
+
 use anyhow::bail;
 use anyhow::Context;
 use regex::Regex;
 
+use crate::config::Config;
+use crate::git::client::GitClient;
 use crate::task_connectors::models::TaskDetails;
+use crate::utils::get_default_mr_description_template;
 
 use super::github::GithubRepo;
 use super::gitlab::GitlabRepo;
@@ -41,13 +46,36 @@ impl RepoConnector {
     }
 
     pub fn create_mr_url(&self, task: &TaskDetails, target_branch: &str) -> anyhow::Result<String> {
+        let git_client = GitClient {};
+
+        let config = Config::read();
+
+        let default_description_template = get_default_mr_description_template(&self);
+
+        let description_template = if Path::new(&config.mr.description_template_path).exists() {
+            std::fs::read_to_string(&config.mr.description_template_path)
+                .unwrap_or(default_description_template)
+        } else {
+            default_description_template
+        };
+
         let url = match self {
-            RepoConnector::Github(project) => {
-                GithubRepo::create_mr_url(project, task, target_branch)?
-            }
-            RepoConnector::Gitlab(project) => {
-                GitlabRepo::create_mr_url(project, task, target_branch)?
-            }
+            RepoConnector::Github(project) => GithubRepo::create_mr_url(
+                &config,
+                &git_client,
+                project,
+                task,
+                target_branch,
+                &description_template,
+            )?,
+            RepoConnector::Gitlab(project) => GitlabRepo::create_mr_url(
+                &config,
+                &git_client,
+                project,
+                task,
+                target_branch,
+                &description_template,
+            )?,
             _ => bail!("Not implemented yet."),
         };
 
