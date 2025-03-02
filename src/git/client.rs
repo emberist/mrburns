@@ -44,7 +44,7 @@ impl GitClientAdapter for GitClient {
         let error = String::from_utf8(output.stderr)?;
 
         if error.contains("fatal") {
-            anyhow::bail!("An error occurred creating branch");
+            bail!("An error occurred creating branch");
         }
 
         Ok(())
@@ -113,7 +113,7 @@ impl GitClientAdapter for GitClient {
             .status()?;
 
         if !cmd.success() {
-            anyhow::bail!("Error writing config key {}", key);
+            bail!("Error writing config key {}", key);
         }
 
         Ok(())

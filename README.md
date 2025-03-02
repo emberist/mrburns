@@ -15,10 +15,10 @@ mrburns allows you to effortlessly create task-specific branches and merge reque
 ## Compatibile tools
 
 |               | Github repos | Gitlab repos | Bitbucket repos |
-| ------------- | ------------ | ------------ | --------------- |
-| Github issues | ✅           | ✅           | 🚧 WIP          |
-| Asana         | ✅           | ✅           | 🚧 WIP          |
-| Jira          | ✅           | ✅           | 🚧 WIP          |
+|---------------|--------------|--------------|-----------------|
+| Github issues | ✅            | ✅            | 🚧 WIP          |
+| Asana         | ✅            | ✅            | 🚧 WIP          |
+| Jira          | ✅            | ✅            | 🚧 WIP          |
 
 ## ⚙️ Setup
 
@@ -111,7 +111,7 @@ mrburns browse
 
 ### Set your config file
 
-This command helps you creating a `mrburns.config.json` file
+This command helps you to create a `mrburns.config.json` file
 
 ```bash
 mrburns config

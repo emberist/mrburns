@@ -83,8 +83,7 @@ mod tests {
             },
             "master",
             &config.mr.description_template.join("\n"),
-        )
-        .unwrap();
+        )?;
 
         let url = Url::parse(&mr_url)?;
 

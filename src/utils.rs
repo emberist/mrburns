@@ -1,17 +1,17 @@
+use crate::constants::GITHUB_API_BASE_URL;
+use crate::git::adapter::GitClientAdapter;
 use anyhow::{bail, Context, Result};
-use chrono::{TimeZone, Utc};
+use chrono::{Local, TimeZone, Utc};
 use reqwest::header::USER_AGENT;
 use reqwest::Client;
 use semver::Version;
 use serde::{de, Deserialize};
 
-use crate::git::adapter::GitClientAdapter;
-
 pub fn get_task_url_config_key(branch_name: &str) -> String {
     format!("branch.{}.task-url", branch_name)
 }
 
-pub fn get_current_task_url(git: &impl GitClientAdapter) -> anyhow::Result<String> {
+pub fn get_current_task_url(git: &impl GitClientAdapter) -> Result<String> {
     let current_branch_name = git.current_branch()?;
 
     let task_url_config_key = get_task_url_config_key(&current_branch_name);
@@ -34,8 +34,10 @@ async fn fetch_versions() -> Result<Vec<Version>> {
         Version::parse(s.trim_start_matches('v')).map_err(de::Error::custom)
     }
 
+    let url = GITHUB_API_BASE_URL.to_owned() + "/repos/emberist/mrburns/tags";
+
     let response = Client::new()
-        .get("https://api.github.com/repos/emberist/mrburns/tags")
+        .get(url)
         .header(
             USER_AGENT,
             "mrburns https://github.com/emberist/mrburns/mrburns",
@@ -55,17 +57,21 @@ async fn fetch_versions() -> Result<Vec<Version>> {
             .get("X-RateLimit-Reset")
             .map_or("unknown", |v| v.to_str().unwrap());
 
-        let t = Utc.timestamp_opt(reset_time_header.parse::<i64>().unwrap(), 0);
+        let t = Utc.timestamp_opt(reset_time_header.parse::<i64>()?, 0);
 
         let reset_time = t
             .single()
-            .map(|t| t.format("%Y-%m-%d %H:%M:%S").to_string())
+            .map(|t| {
+                t.with_timezone(&Local)
+                    .format("%Y-%m-%d %H:%M:%S %:z")
+                    .to_string()
+            })
             .unwrap_or_else(|| "unknown".to_string());
 
         bail!(
-            "GitHub API rate limit exceeded. Try again after {} UTC.",
+            "GitHub API rate limit exceeded. Try again after {}.",
             reset_time
-        )
+        );
     }
 }
 

@@ -1,7 +1,4 @@
-use cliclack::{
-    log::{self, info},
-    spinner,
-};
+use cliclack::{log::info, spinner};
 
 use crate::{
     cli::StartArgs,
@@ -26,7 +23,7 @@ pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
     let branch_name = format!("{}/{}", params.task_type, task_info.sanitized_name());
 
     if params.dry {
-        log::info(format!("Simulate creating branch {}.", branch_name))?;
+        info(format!("Simulate creating branch {}.", branch_name))?;
     } else {
         let git_client = GitClient {};
 
@@ -36,7 +33,7 @@ pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
 
         git_client.switch(&branch_name, true)?;
 
-        log::info(format!("Branch {} created!", branch_name))?;
+        info(format!("Branch {} created!", branch_name))?;
     }
 
     Ok(())
