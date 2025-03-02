@@ -87,7 +87,7 @@ NOTE: There is an options `--type` option (or `-t`) to choose the task type betw
 
 ### Create a Merge Request
 
-This commands open for you a prefilled marge reuest page
+This commands open for you a prefilled marge request page
 
 ```bash
 mrburns mr
