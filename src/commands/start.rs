@@ -17,7 +17,7 @@ pub async fn start_task(params: &StartArgs) -> anyhow::Result<()> {
 
     spinner.start("Fetching the task...");
 
-    let connector = TaskConnector::from_url(&params.link.as_str())?;
+    let connector = TaskConnector::from_url(params.link.as_str())?;
 
     let task_info = connector.fetch_task().await?;
 

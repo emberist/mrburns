@@ -37,12 +37,12 @@ impl GitlabRepo {
             .mr
             .title_template
             .replace(TASK_ID_REF, &task_info.id)
-            .replace(TASK_TYPE_REF, &task_type)
+            .replace(TASK_TYPE_REF, task_type)
             .replace(TASK_TITLE_REF, &task_info.name);
 
         let mr_description = description_template
             .replace(TASK_ID_REF, &task_info.id)
-            .replace(TASK_TYPE_REF, &task_type)
+            .replace(TASK_TYPE_REF, task_type)
             .replace(TASK_TITLE_REF, &task_info.name)
             .replace(TASK_URL_REF, &task_url);
 
@@ -51,7 +51,7 @@ impl GitlabRepo {
             &[
                 ("merge_request[title]", mr_title.as_str()),
                 ("merge_request[source_branch]", &current_branch_name),
-                ("merge_request[target_branch]", &target_branch),
+                ("merge_request[target_branch]", target_branch),
                 ("merge_request[description]", &mr_description),
                 (
                     "merge_request[draft]",
