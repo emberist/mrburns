@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.0](https://github.com/emberist/mrburns/compare/v1.4.0...v1.5.0) (2025-03-03)
+
+
+### Features
+
+* add clippy component to CI for improved linting ([b519d3f](https://github.com/emberist/mrburns/commit/b519d3f5a0ad0b79bc3078520f22319eb73d1722))
+* update README and gitignore ([82f0753](https://github.com/emberist/mrburns/commit/82f07533c5fe36a2da30c2963e4cab3b26d3d4db))
+
 ## [1.4.0](https://github.com/emberist/mrburns/compare/v1.3.1...v1.4.0) (2024-06-26)
 
 
