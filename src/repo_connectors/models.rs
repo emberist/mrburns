@@ -40,7 +40,7 @@ impl RepoConnector {
             "github.com" => RepoConnector::Github(project),
             "gitlab.com" => RepoConnector::Gitlab(project),
             "bitbucket.org" => RepoConnector::Bitbucket(project),
-            _ => anyhow::bail!("Unknown url domain"),
+            _ => bail!("Unknown url domain"),
         };
 
         Ok(connector)

@@ -10,10 +10,10 @@ pub fn get_jira_task_info_from_url(url: &str) -> Option<(&str, &str)> {
             let task_domain = caps.get(1).map(|m| m.as_str());
             let task_id = caps.get(2).map(|m| m.as_str());
 
-            return match (task_domain, task_id) {
+            match (task_domain, task_id) {
                 (Some(domain), Some(id)) => Some((domain, id)),
                 _ => None,
-            };
+            }
         }
         _ => None,
     }

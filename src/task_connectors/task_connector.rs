@@ -15,7 +15,7 @@ use super::{
 };
 
 #[derive(Debug, Clone)]
-
+#[allow(dead_code)]
 pub enum TaskConnector {
     Asana {
         original_url: String,

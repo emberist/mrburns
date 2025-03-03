@@ -11,10 +11,10 @@ pub fn get_github_issue_info_from_url(url: &str) -> Option<(&str, u64)> {
 
             let issue_id = caps.get(2).and_then(|m| m.as_str().parse::<u64>().ok());
 
-            return match (repo, issue_id) {
+            match (repo, issue_id) {
                 (Some(repo), Some(issue_id)) => Some((repo, issue_id)),
                 _ => None,
-            };
+            }
         }
         _ => None,
     }

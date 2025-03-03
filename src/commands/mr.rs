@@ -36,7 +36,7 @@ pub async fn create_mr(params: &MrArgs) -> anyhow::Result<()> {
 
     let mr_spinner = spinner();
 
-    mr_spinner.start("Getting task informations...");
+    mr_spinner.start("Getting task information's...");
 
     let task_info = task_connector.fetch_task().await?;
 
