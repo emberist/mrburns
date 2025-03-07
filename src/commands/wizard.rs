@@ -5,25 +5,21 @@ use cliclack::{
 
 use crate::{
     cli::ConfigArgs,
-    config::{BranchPrefixes, Config, MrConfig},
-    constants::DEFAULT_MR_TEMPLATE_PATH,
+    config::{Branches, MrConfig, MrburnsConfig, Prefix},
 };
 
 pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
     info("Configuration started")?;
 
     if args.get {
-        let config = Config::read();
+        let config = MrburnsConfig::read();
 
-        log::success(format!(
-            "Here your config: {}",
-            serde_json::to_string_pretty(&config)?
-        ))?;
+        log::success(serde_json::to_string_pretty(&config)?)?;
 
         return Ok(());
     }
 
-    if Config::exists() && !args.force {
+    if MrburnsConfig::exists() && !args.force {
         log::warning(
             "Configuration already exists. Skipping wizard. Use the --force option to override it",
         )?;
@@ -31,7 +27,7 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
         return Ok(());
     }
 
-    if args.force && Config::exists() {
+    if args.force && MrburnsConfig::exists() {
         let should_continue =
             confirm("You are overriding the current configuration. Do you want to preceed?")
                 .interact()?;
@@ -44,45 +40,42 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
     let default_draft =
         confirm("Do you want the merge request created to be draft as default?").interact()?;
 
-    let default_config = Config::default();
+    let default_config = MrburnsConfig::default();
 
-    let title_template = input("Which title template would you like to use?")
-        .default_input(&default_config.mr.title_template)
+    let title_format = input("Which title template would you like to use?")
+        .default_input(&default_config.mr.title_format)
         .interact()?;
 
-    let description_template_path =
-        input("Which description template would you like to use? (Leave empty to skip)")
-            .default_input(DEFAULT_MR_TEMPLATE_PATH)
-            .interact()?;
-
     let feature = input("Which feature branch prefix would you like to use?")
-        .default_input(&default_config.branch_prefixes.feature)
+        .default_input(&default_config.branches.prefixes.feature)
         .interact()?;
 
     let chore = input("Which chore branch prefix would you like to use?")
-        .default_input(&default_config.branch_prefixes.chore)
+        .default_input(&default_config.branches.prefixes.chore)
         .interact()?;
 
     let bugfix = input("Which bugfix branch prefix would you like to use?")
-        .default_input(&default_config.branch_prefixes.bugfix)
+        .default_input(&default_config.branches.prefixes.bugfix)
         .interact()?;
 
     let release = input("Which release branch prefix would you like to use?")
-        .default_input(&default_config.branch_prefixes.release)
+        .default_input(&default_config.branches.prefixes.release)
         .interact()?;
 
-    Config::write(Config {
+    MrburnsConfig::write(MrburnsConfig {
         mr: MrConfig {
             default_draft,
-            title_template,
-            description_template_path,
-            description_template: default_config.mr.description_template,
+            title_format,
         },
-        branch_prefixes: BranchPrefixes {
-            bugfix,
-            chore,
-            feature,
-            release,
+        branches: Branches {
+            include_task_identifier: true,
+
+            prefixes: Prefix {
+                bugfix,
+                chore,
+                feature,
+                release,
+            },
         },
     })?;
 

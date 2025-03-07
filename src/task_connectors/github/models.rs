@@ -11,6 +11,7 @@ use crate::{
 
 #[derive(Debug, Deserialize)]
 pub struct GithubIssue {
+    body: Option<String>,
     title: String,
     number: u64,
 }
@@ -19,6 +20,7 @@ impl BaseTask for GithubIssue {
     fn get_details(&self) -> TaskDetails {
         TaskDetails {
             connector: ConnectorType::Github,
+            description: self.body.to_owned(),
             id: self.number.to_string(),
             name: self.title.to_owned(),
         }

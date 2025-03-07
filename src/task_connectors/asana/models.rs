@@ -12,12 +12,14 @@ use crate::{
 pub struct AsanaTask {
     pub gid: String,
     pub name: String,
+    pub description: Option<String>,
 }
 
 impl BaseTask for AsanaTask {
     fn get_details(&self) -> TaskDetails {
         TaskDetails {
             connector: ConnectorType::Asana,
+            description: self.description.to_owned(),
             id: self.gid.to_owned(),
             name: self.name.to_owned(),
         }

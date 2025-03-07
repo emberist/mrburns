@@ -1,8 +1,8 @@
 use url::Url;
 
 use crate::{
-    config::Config,
-    constants::{TASK_ID_REF, TASK_TITLE_REF, TASK_TYPE_REF, TASK_URL_REF},
+    config::MrburnsConfig,
+    constants::{TASK_DESCRIPTION_REF, TASK_ID_REF, TASK_TITLE_REF, TASK_TYPE_REF, TASK_URL_REF},
     git::adapter::GitClientAdapter,
     task_connectors::models::TaskDetails,
     utils::get_current_task_url,
@@ -12,7 +12,7 @@ pub struct GithubRepo {}
 
 impl GithubRepo {
     pub fn create_mr_url(
-        config: &Config,
+        config: &MrburnsConfig,
         git_client: &impl GitClientAdapter,
         project_id: &str,
         task_info: &TaskDetails,
@@ -31,11 +31,11 @@ impl GithubRepo {
         let task_type = current_branch
             .split("/")
             .next()
-            .unwrap_or(&config.branch_prefixes.feature);
+            .unwrap_or(&config.branches.prefixes.feature);
 
         let mr_title = config
             .mr
-            .title_template
+            .title_format
             .replace(TASK_ID_REF, &task_info.id)
             .replace(TASK_TYPE_REF, &task_type)
             .replace(TASK_TITLE_REF, &task_info.name);
@@ -44,6 +44,10 @@ impl GithubRepo {
             .replace(TASK_ID_REF, &task_info.id)
             .replace(TASK_TYPE_REF, &task_type)
             .replace(TASK_TITLE_REF, &task_info.name)
+            .replace(
+                TASK_DESCRIPTION_REF,
+                &task_info.description.clone().unwrap_or_default(),
+            )
             .replace(TASK_URL_REF, &task_url);
 
         let url = Url::parse_with_params(
@@ -65,13 +69,16 @@ mod tests {
 
     use anyhow::Result;
 
-    use crate::{git::mock::GitClientMock, task_connectors::models::ConnectorType};
+    use crate::{
+        config::get_default_mr_description, git::mock::GitClientMock,
+        task_connectors::models::ConnectorType,
+    };
 
     use super::*;
 
     #[test]
     fn creates_github_mr_url() -> Result<()> {
-        let config = Config::default();
+        let config = MrburnsConfig::default();
         let mr_url = GithubRepo::create_mr_url(
             &config,
             &GitClientMock {},
@@ -80,9 +87,10 @@ mod tests {
                 connector: ConnectorType::Github,
                 id: "123".to_string(),
                 name: "Hello World".to_string(),
+                description: Some("Some cool description".to_string()),
             },
             "master",
-            &config.mr.description_template.join("\n"),
+            &get_default_mr_description(),
         )
         .unwrap();
 
@@ -99,7 +107,7 @@ mod tests {
         let expected_params = [
             ("expand", "1"),
             ("title", "123/feat/Hello World"),
-            ("body", "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n{task_actions}")
+            ("body", "# [Hello World](https://github.com/some-cool-repo/issues/0)\n## Description\nSome cool description\n\n---\n{task_actions}")
         ];
 
         zip(params, expected_params).for_each(

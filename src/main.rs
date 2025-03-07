@@ -63,18 +63,17 @@ async fn main() {
         Commands::Config(args) => start_config_wizard(args),
     };
 
-    if result.is_err() {
-        let error = result.unwrap_err();
+    match result {
+        Ok(_) => outro("Done.").unwrap(),
+        Err(error) => {
+            if format!("{}", error.root_cause()).eq("operation interrupted") {
+                process::exit(0);
+            }
 
-        if format!("{}", error.root_cause()).eq("operation interrupted") {
-            process::exit(0);
+            log::error(&error).unwrap();
+
+            outro("Done with errors.").unwrap();
+            process::exit(1);
         }
-
-        log::error(&error).unwrap();
-
-        outro("Done with errors.").unwrap();
-        process::exit(1);
-    } else {
-        outro("Done.").unwrap();
     }
 }
