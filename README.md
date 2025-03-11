@@ -14,11 +14,12 @@ mrburns allows you to effortlessly create task-specific branches and merge reque
 
 ## Compatibile tools
 
-|               | Github repos | Gitlab repos | Bitbucket repos |
-|---------------|--------------|--------------|-----------------|
-| Github issues | ✅            | ✅            | 🚧 WIP          |
-| Asana         | ✅            | ✅            | 🚧 WIP          |
-| Jira          | ✅            | ✅            | 🚧 WIP          |
+|               | Github repos | Gitlab repos |
+| ------------- | ------------ | ------------ |
+| Github issues | ✅           | ✅           |
+| Asana         | ✅           | ✅           |
+| Jira          | ✅           | ✅           |
+| ClickUp       | ✅           | ✅           |
 
 ## ⚙️ Setup
 
@@ -54,6 +55,8 @@ Based on which tool you are using, you have to add the following environment var
 export JIRA_USERNAME="PUT_YOUR_USERNAME_HERE"
 export JIRA_TOKEN="PUT_YOUR_TOKEN_HERE"
 
+export CLICKUP_TOKEN="PUT_YOUR_TOKEN_HERE" # read-only token used to access your click up tasks
+
 export GITHUB_TOKEN="PUT_YOUR_TOKEN_HERE" # read-only token used to access your github issues
 ```
 
@@ -64,6 +67,7 @@ Here are some hints on how to generate the tokens.
 - **JIRA_USERNAME**: should be the email associated with your jira account
 - [JIRA_TOKEN](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/)
 - [GITHUB_TOKEN](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
+- [CLICKUP_TOKEN](https://developer.clickup.com/docs/authentication#personal-token)
 
 ## 🚀 Run
 
