@@ -13,6 +13,7 @@ use crate::{
 pub struct ClickupTask {
     id: String,
     name: String,
+    description: String,
 }
 
 impl BaseTask for ClickupTask {
@@ -21,6 +22,7 @@ impl BaseTask for ClickupTask {
             connector: ConnectorType::ClickUp,
             id: self.id.to_owned(),
             name: self.name.to_owned(),
+            description: Some(self.description.to_owned()),
         }
     }
 }
