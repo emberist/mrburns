@@ -12,10 +12,13 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@nightly
         with:
-          components: rustfmt
+          components: rustfmt, clippy
 
       - name: Check formatting
         run: cargo fmt --all --check
+
+      - name: Check linting
+        run: cargo clippy --all -- -D warnings
 
       - name: Test
         run: |

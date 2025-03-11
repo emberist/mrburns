@@ -95,8 +95,7 @@ impl MrburnsConfig {
             return default_config;
         }
 
-        let config_file_content =
-            std::fs::read_to_string(CONFIG_FILE_NAME).unwrap_or(String::new());
+        let config_file_content = std::fs::read_to_string(CONFIG_FILE_NAME).unwrap_or_default();
 
         let config: MrburnsConfig =
             serde_json::from_str(&config_file_content).unwrap_or(default_config);

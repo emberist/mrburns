@@ -37,12 +37,12 @@ impl GithubRepo {
             .mr
             .title_format
             .replace(TASK_ID_REF, &task_info.id)
-            .replace(TASK_TYPE_REF, &task_type)
+            .replace(TASK_TYPE_REF, task_type)
             .replace(TASK_TITLE_REF, &task_info.name);
 
         let mr_description = description_template
             .replace(TASK_ID_REF, &task_info.id)
-            .replace(TASK_TYPE_REF, &task_type)
+            .replace(TASK_TYPE_REF, task_type)
             .replace(TASK_TITLE_REF, &task_info.name)
             .replace(
                 TASK_DESCRIPTION_REF,
@@ -91,8 +91,7 @@ mod tests {
             },
             "master",
             &get_default_mr_description(),
-        )
-        .unwrap();
+        )?;
 
         let url = Url::parse(&mr_url)?;
 

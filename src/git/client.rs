@@ -26,7 +26,7 @@ impl GitClientAdapter for GitClient {
             })
             .collect();
 
-        Ok(files.len() == 0)
+        Ok(files.is_empty())
     }
 
     fn switch(&self, name: &str, create_branch: bool) -> anyhow::Result<()> {
@@ -44,7 +44,7 @@ impl GitClientAdapter for GitClient {
         let error = String::from_utf8(output.stderr)?;
 
         if error.contains("fatal") {
-            anyhow::bail!("An error occurred creating branch");
+            bail!("An error occurred creating branch");
         }
 
         Ok(())
@@ -59,7 +59,7 @@ impl GitClientAdapter for GitClient {
         let branch_name = String::from_utf8(output.stdout)?
             .replace('\n', "")
             .split('/')
-            .last()
+            .next_back()
             .ok_or_else(|| anyhow::anyhow!("Cannot get default branch name"))?
             .to_string();
 
@@ -113,7 +113,7 @@ impl GitClientAdapter for GitClient {
             .status()?;
 
         if !cmd.success() {
-            anyhow::bail!("Error writing config key {}", key);
+            bail!("Error writing config key {}", key);
         }
 
         Ok(())
