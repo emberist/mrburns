@@ -2,6 +2,7 @@ use crate::strings::slugify;
 
 pub enum ConnectorType {
     Asana,
+    ClickUp,
     Github,
     Jira,
 }
@@ -21,11 +22,8 @@ impl TaskDetails {
         let normalized_task_name = slugify(&self.name);
 
         match self.connector {
-            ConnectorType::Asana => normalized_task_name,
-            ConnectorType::Github => normalized_task_name,
-            ConnectorType::Jira => {
-                format!("{}-{}", self.id, normalized_task_name)
-            }
+            ConnectorType::Jira => format!("{}-{}", self.id, normalized_task_name),
+            _ => normalized_task_name,
         }
     }
 }
