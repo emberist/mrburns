@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.0](https://github.com/emberist/mrburns/compare/v1.4.0...v1.5.0) (2025-03-11)
+
+
+### Features
+
+* add ClickUp connector integration ([c6344a9](https://github.com/emberist/mrburns/commit/c6344a9c2e1cb92f4457b6b4ab346191ce5fb200))
+* add ClickUp connector integration ([8fbae92](https://github.com/emberist/mrburns/commit/8fbae92813dae9d1b61bd3d6ac5d04dd5d6fbf5c))
+* add clippy component to CI for improved linting ([b519d3f](https://github.com/emberist/mrburns/commit/b519d3f5a0ad0b79bc3078520f22319eb73d1722))
+* Add Clippy, format code, and improve errors handling ([14c9590](https://github.com/emberist/mrburns/commit/14c9590fc05c41d559631076dcdd911e18c8e37a))
+* update README and gitignore ([82f0753](https://github.com/emberist/mrburns/commit/82f07533c5fe36a2da30c2963e4cab3b26d3d4db))
+
 ## [1.4.0](https://github.com/emberist/mrburns/compare/v1.3.1...v1.4.0) (2024-06-26)
 
 
