@@ -1,20 +1,16 @@
 {
   "mr": {
     "defaultDraft": false,
-    "titleTemplate": "[{task_type}] {task_title}",
-    "descriptionTemplatePath": "./templates/default.md",
-    "descriptionTemplate": [
-      "### Changes",
-      "- [x] [{task_title}]({task_url})",
-      "",
-      "---",
-      "{task_actions}"
-    ]
+    "titleFormat": "[{task_type}] {task_title}"
   },
-  "branchPrefixes": {
-    "feature": "feat",
-    "release": "release",
-    "bugfix": "bugfix",
-    "chore": "chore"
+  "branches": {
+    "includeTaskIdentifier": true,
+    "prefix": {
+      "default": "feat",
+      "feature": "feat",
+      "release": "release",
+      "bugfix": "bugfix",
+      "chore": "chore"
+    }
   }
 }

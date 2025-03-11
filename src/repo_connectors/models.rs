@@ -4,7 +4,9 @@ use anyhow::bail;
 use anyhow::Context;
 use regex::Regex;
 
-use crate::config::Config;
+use crate::config::get_default_mr_description;
+use crate::config::MrburnsConfig;
+use crate::constants::DEFAULT_MR_TEMPLATE_PATH;
 use crate::constants::TASK_ACTIONS_REF;
 use crate::constants::TASK_ID_REF;
 use crate::git::client::GitClient;
@@ -49,23 +51,21 @@ impl RepoConnector {
     pub fn create_mr_url(&self, task: &TaskDetails, target_branch: &str) -> anyhow::Result<String> {
         let git_client = GitClient {};
 
-        let config = Config::read();
+        let config = MrburnsConfig::read();
 
         let actions = match self {
             RepoConnector::Github(_) => format!("closes #{}", TASK_ID_REF),
             RepoConnector::Gitlab(_) => "/assign me".to_string(),
-            RepoConnector::Bitbucket(_) => String::new(),
+            RepoConnector::Bitbucket(_) => String::default(),
         };
 
-        let default_description_template = config
-            .mr
-            .description_template
-            .join("\n")
-            .replace(TASK_ACTIONS_REF, &actions);
+        let default_description_template =
+            get_default_mr_description().replace(TASK_ACTIONS_REF, &actions);
 
-        let description_template = if Path::new(&config.mr.description_template_path).exists() {
-            std::fs::read_to_string(&config.mr.description_template_path)
+        let description_template = if Path::new(DEFAULT_MR_TEMPLATE_PATH).exists() {
+            std::fs::read_to_string(DEFAULT_MR_TEMPLATE_PATH)
                 .unwrap_or(default_description_template)
+                .replace(TASK_ACTIONS_REF, &actions)
         } else {
             default_description_template
         };

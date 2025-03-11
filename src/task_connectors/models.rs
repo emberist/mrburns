@@ -12,6 +12,7 @@ pub trait BaseTask {
 
 pub struct TaskDetails {
     pub connector: ConnectorType,
+    pub description: Option<String>,
     pub name: String,
     pub id: String,
 }

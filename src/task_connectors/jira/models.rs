@@ -8,6 +8,7 @@ use crate::task_connectors::models::{BaseTask, ConnectorType, TaskDetails};
 #[derive(Deserialize, Debug)]
 pub struct Fields {
     pub summary: String,
+    pub description: Option<String>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -20,6 +21,7 @@ impl BaseTask for JiraTask {
     fn get_details(&self) -> TaskDetails {
         TaskDetails {
             connector: ConnectorType::Jira,
+            description: self.fields.description.to_owned(),
             id: self.key.to_owned(),
             name: self.fields.summary.to_owned(),
         }

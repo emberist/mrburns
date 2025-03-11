@@ -1,8 +1,8 @@
 use url::Url;
 
 use crate::{
-    config::Config,
-    constants::{TASK_ID_REF, TASK_TITLE_REF, TASK_TYPE_REF, TASK_URL_REF},
+    config::MrburnsConfig,
+    constants::{TASK_DESCRIPTION_REF, TASK_ID_REF, TASK_TITLE_REF, TASK_TYPE_REF, TASK_URL_REF},
     git::adapter::GitClientAdapter,
     task_connectors::models::TaskDetails,
     utils::get_current_task_url,
@@ -12,7 +12,7 @@ pub struct GitlabRepo {}
 
 impl GitlabRepo {
     pub fn create_mr_url(
-        config: &Config,
+        config: &MrburnsConfig,
         git_client: &impl GitClientAdapter,
         project_id: &str,
         task_info: &TaskDetails,
@@ -31,11 +31,11 @@ impl GitlabRepo {
         let task_type = current_branch
             .split("/")
             .next()
-            .unwrap_or(&config.branch_prefixes.feature);
+            .unwrap_or(&config.branches.prefixes.feature);
 
         let mr_title = config
             .mr
-            .title_template
+            .title_format
             .replace(TASK_ID_REF, &task_info.id)
             .replace(TASK_TYPE_REF, task_type)
             .replace(TASK_TITLE_REF, &task_info.name);
@@ -44,6 +44,10 @@ impl GitlabRepo {
             .replace(TASK_ID_REF, &task_info.id)
             .replace(TASK_TYPE_REF, task_type)
             .replace(TASK_TITLE_REF, &task_info.name)
+            .replace(
+                TASK_DESCRIPTION_REF,
+                &task_info.description.clone().unwrap_or_default(),
+            )
             .replace(TASK_URL_REF, &task_url);
 
         let url = Url::parse_with_params(
@@ -72,13 +76,16 @@ mod tests {
 
     use anyhow::Result;
 
-    use crate::{git::mock::GitClientMock, task_connectors::models::ConnectorType};
+    use crate::{
+        config::get_default_mr_description, git::mock::GitClientMock,
+        task_connectors::models::ConnectorType,
+    };
 
     use super::*;
 
     #[test]
     fn creates_gitlab_mr_url() -> Result<()> {
-        let config = Config::default();
+        let config = MrburnsConfig::default();
 
         let mr_url = GitlabRepo::create_mr_url(
             &config,
@@ -88,9 +95,10 @@ mod tests {
                 connector: ConnectorType::Jira,
                 id: "123".to_string(),
                 name: "Hello World".to_string(),
+                description: Some("Some text".to_string()),
             },
             "master",
-            &config.mr.description_template.join("\n"),
+            &get_default_mr_description(),
         )?;
 
         let url = Url::parse(&mr_url)?;
@@ -106,7 +114,7 @@ mod tests {
             ("merge_request[target_branch]", "master"),
             (
                 "merge_request[description]",
-                "### Changes\n- [x] [Hello World](https://github.com/some-cool-repo/issues/0)\n\n---\n{task_actions}",
+                "# [Hello World](https://github.com/some-cool-repo/issues/0)\n## Description\nSome text\n\n---\n{task_actions}"
             ),
             ("merge_request[draft]", "false"),
             ("merge_request[squash_on_merge]", "true"),
