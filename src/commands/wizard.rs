@@ -5,7 +5,7 @@ use cliclack::{
 
 use crate::{
     cli::ConfigArgs,
-    config::{BranchPrefixes, Config, MrConfig},
+    config::{BranchPrefixes, Config, ConfigScope, MrConfig},
     constants::DEFAULT_MR_TEMPLATE_PATH,
 };
 
@@ -23,18 +23,36 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
         return Ok(());
     }
 
-    if Config::exists() && !args.force {
-        log::warning(
-            "Configuration already exists. Skipping wizard. Use the --force option to override it",
-        )?;
+    let scope = if args.global {
+        ConfigScope::Global
+    } else {
+        ConfigScope::Project
+    };
+
+    let scope_label = match scope {
+        ConfigScope::Global => "user-level",
+        ConfigScope::Project => "project",
+    };
+
+    if let Some(path) = Config::path(scope) {
+        info(format!("Target {} config: {}", scope_label, path.display()))?;
+    }
+
+    if Config::exists(scope) && !args.force {
+        log::warning(format!(
+            "{} configuration already exists. Skipping wizard. Use the --force option to override it",
+            scope_label
+        ))?;
 
         return Ok(());
     }
 
-    if args.force && Config::exists() {
-        let should_continue =
-            confirm("You are overriding the current configuration. Do you want to preceed?")
-                .interact()?;
+    if args.force && Config::exists(scope) {
+        let should_continue = confirm(format!(
+            "You are overriding the current {} configuration. Do you want to preceed?",
+            scope_label
+        ))
+        .interact()?;
 
         if !should_continue {
             return Ok(());
@@ -71,20 +89,23 @@ pub fn start_config_wizard(args: &ConfigArgs) -> anyhow::Result<()> {
         .default_input(&default_config.branch_prefixes.release)
         .interact()?;
 
-    Config::write(Config {
-        mr: MrConfig {
-            default_draft,
-            title_template,
-            description_template_path,
-            description_template: default_config.mr.description_template,
+    Config::write(
+        Config {
+            mr: MrConfig {
+                default_draft,
+                title_template,
+                description_template_path,
+                description_template: default_config.mr.description_template,
+            },
+            branch_prefixes: BranchPrefixes {
+                bugfix,
+                chore,
+                feature,
+                release,
+            },
         },
-        branch_prefixes: BranchPrefixes {
-            bugfix,
-            chore,
-            feature,
-            release,
-        },
-    })?;
+        scope,
+    )?;
 
     Ok(())
 }

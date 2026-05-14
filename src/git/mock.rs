@@ -1,5 +1,6 @@
 use super::adapter::GitClientAdapter;
 
+#[allow(dead_code)]
 pub struct GitClientMock {}
 
 impl GitClientAdapter for GitClientMock {

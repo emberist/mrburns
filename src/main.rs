@@ -63,9 +63,7 @@ async fn main() {
         Commands::Config(args) => start_config_wizard(args),
     };
 
-    if result.is_err() {
-        let error = result.unwrap_err();
-
+    if let Err(error) = result {
         if format!("{}", error.root_cause()).eq("operation interrupted") {
             process::exit(0);
         }

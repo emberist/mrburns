@@ -121,6 +121,20 @@ This command helps you to create a `mrburns.config.json` file
 mrburns config
 ```
 
+Pass `--global` to write to your user-level config instead of the project-local one:
+
+```bash
+mrburns config --global
+```
+
+mrburns reads configuration from two locations, layered in this order (later overrides earlier):
+
+1. Built-in defaults
+2. User-level config: `$XDG_CONFIG_HOME/mrburns/mrburns.config.json`, or `~/.config/mrburns/mrburns.config.json` if `XDG_CONFIG_HOME` is unset
+3. Project-local config: `./mrburns.config.json` in the current working directory
+
+The merge is deep per key, so a project file only needs to override the fields it cares about; everything else falls through to the user-level file and then the defaults. Use `mrburns config --get` to inspect the effective merged configuration.
+
 The default config file is something like this
 
 ```json

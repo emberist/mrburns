@@ -1,10 +1,20 @@
 use serde::{Deserialize, Serialize};
-use std::{fs::OpenOptions, path::Path};
+use serde_json::Value;
+use std::{
+    fs::{self, OpenOptions},
+    path::{Path, PathBuf},
+};
 
 use crate::constants::{
     CONFIG_FILE_NAME, DEFAULT_MR_TEMPLATE_PATH, TASK_ACTIONS_REF, TASK_ID_REF, TASK_TITLE_REF,
     TASK_TYPE_REF, TASK_URL_REF,
 };
+
+#[derive(Debug, Clone, Copy)]
+pub enum ConfigScope {
+    Project,
+    Global,
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -65,31 +75,84 @@ pub struct Config {
     pub branch_prefixes: BranchPrefixes,
 }
 
+fn project_config_path() -> PathBuf {
+    PathBuf::from(CONFIG_FILE_NAME)
+}
+
+fn global_config_path() -> Option<PathBuf> {
+    let base = std::env::var_os("XDG_CONFIG_HOME")
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".config")))?;
+
+    Some(base.join("mrburns").join(CONFIG_FILE_NAME))
+}
+
+fn scope_path(scope: ConfigScope) -> Option<PathBuf> {
+    match scope {
+        ConfigScope::Project => Some(project_config_path()),
+        ConfigScope::Global => global_config_path(),
+    }
+}
+
+fn read_json(path: &Path) -> Option<Value> {
+    let content = fs::read_to_string(path).ok()?;
+    serde_json::from_str(&content).ok()
+}
+
+fn merge_json(base: &mut Value, overlay: Value) {
+    match (base, overlay) {
+        (Value::Object(base_map), Value::Object(overlay_map)) => {
+            for (key, overlay_value) in overlay_map {
+                merge_json(base_map.entry(key).or_insert(Value::Null), overlay_value);
+            }
+        }
+        (slot, overlay_value) => {
+            *slot = overlay_value;
+        }
+    }
+}
+
 impl Config {
-    pub fn exists() -> bool {
-        Path::new(CONFIG_FILE_NAME).exists()
+    pub fn path(scope: ConfigScope) -> Option<PathBuf> {
+        scope_path(scope)
+    }
+
+    pub fn exists(scope: ConfigScope) -> bool {
+        scope_path(scope).is_some_and(|p| p.exists())
     }
 
     pub fn read() -> Self {
-        let default_config = Self::default();
+        let mut merged =
+            serde_json::to_value(Self::default()).expect("default Config must serialize to JSON");
 
-        if !Self::exists() {
-            return default_config;
+        if let Some(path) = global_config_path() {
+            if let Some(value) = read_json(&path) {
+                merge_json(&mut merged, value);
+            }
         }
 
-        let config_file_content = std::fs::read_to_string(CONFIG_FILE_NAME).unwrap_or_default();
+        if let Some(value) = read_json(&project_config_path()) {
+            merge_json(&mut merged, value);
+        }
 
-        let config: Config = serde_json::from_str(&config_file_content).unwrap_or(default_config);
-
-        config
+        serde_json::from_value(merged).unwrap_or_default()
     }
 
-    pub fn write(config: Self) -> anyhow::Result<()> {
+    pub fn write(config: Self, scope: ConfigScope) -> anyhow::Result<()> {
+        let path = scope_path(scope)
+            .ok_or_else(|| anyhow::anyhow!("unable to resolve config path for the given scope"))?;
+
+        if let Some(parent) = path.parent() {
+            if !parent.as_os_str().is_empty() {
+                fs::create_dir_all(parent)?;
+            }
+        }
+
         let mut file = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
-            .open(CONFIG_FILE_NAME)?;
+            .open(&path)?;
 
         serde_json::to_writer_pretty(&mut file, &config)?;
 
