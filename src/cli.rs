@@ -71,4 +71,11 @@ pub struct ConfigArgs {
 
     #[arg(long, default_value_t = false)]
     pub get: bool,
+
+    #[arg(
+        long,
+        default_value_t = false,
+        help = "Write to the user-level config (~/.config/mrburns/mrburns.config.json) instead of the project-local one"
+    )]
+    pub global: bool,
 }
