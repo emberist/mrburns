@@ -103,10 +103,7 @@ fn merge_json(base: &mut Value, overlay: Value) {
     match (base, overlay) {
         (Value::Object(base_map), Value::Object(overlay_map)) => {
             for (key, overlay_value) in overlay_map {
-                merge_json(
-                    base_map.entry(key).or_insert(Value::Null),
-                    overlay_value,
-                );
+                merge_json(base_map.entry(key).or_insert(Value::Null), overlay_value);
             }
         }
         (slot, overlay_value) => {
@@ -125,8 +122,8 @@ impl Config {
     }
 
     pub fn read() -> Self {
-        let mut merged = serde_json::to_value(Self::default())
-            .expect("default Config must serialize to JSON");
+        let mut merged =
+            serde_json::to_value(Self::default()).expect("default Config must serialize to JSON");
 
         if let Some(path) = global_config_path() {
             if let Some(value) = read_json(&path) {
